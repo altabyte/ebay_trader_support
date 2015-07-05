@@ -1,0 +1,33 @@
+#!/usr/bin/env ruby
+
+require_relative './helper'
+include ExecutableHelper
+
+require 'ebay_trading'
+require 'ebay_trading/request'
+
+EbayTrading.configure do |config|
+  config.environment = :production
+  config.ebay_site_id = 3 # ebay.co.uk
+  config.dev_id  = ENV['EBAY_API_DEV_ID']
+  config.app_id  = ENV['EBAY_API_APP_ID']
+  config.cert_id = ENV['EBAY_API_CERT_ID']
+end
+
+begin
+  request = EbayTrading::Request.new('GeteBayOfficialTime', ENV['EBAY_API_AUTH_TOKEN_TT'])
+  if request.success?
+    console "Official eBay time is:  #{request.timestamp.to_s('%H:%M:%S GMT on %A %d %B %Y')}"
+  else
+    if request.has_errors?
+      request.errors.each do |error|
+        console error[:short_message], :red
+        console error[:long_message], :red
+      end
+    else
+      console 'Unknown error', :red
+    end
+  end
+rescue Exception => e
+  console e.message, :red
+end

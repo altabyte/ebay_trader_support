@@ -15,7 +15,14 @@ EbayTrading.configure do |config|
 end
 
 begin
-  request = EbayTrading::Request.new('GeteBayOfficialTime', ENV['EBAY_API_AUTH_TOKEN_TT'])
+
+  # GeteBayOfficialTime call is not specific to any particular user, so can
+  # use any valid Auth Token.
+  auth_token = production_auth_tokens.values.first
+
+  # Execute the request...
+  request = EbayTrading::Request.new('GeteBayOfficialTime', auth_token)
+
   if request.success?
     console "Official eBay time is:  #{request.timestamp.to_s('%H:%M:%S GMT on %A %d %B %Y')}"
   else

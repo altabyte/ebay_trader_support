@@ -24,13 +24,14 @@ class Categories
     # will cause it to return all root categories for the site.
     category_number = options.show_root_categories ? 'all' : ARGV.first
 
+    # GetCategories call is not specific to any particular user, so can
+    # use any valid Auth Token.
+    auth_token = production_auth_tokens.values.first
+
     categories = GetCategories.new(auth_token, category_number, ebay_site_id: options.ebay_site_id)
     console categories.to_s
   end
 
-  def auth_token
-    ENV['EBAY_API_AUTH_TOKEN_TT']
-  end
 
   #---------------------------------------------------------------------------
   private
@@ -46,7 +47,7 @@ class Categories
         options.show_root_categories = true
       end
 
-      opts.on('-z', '--ebay-site-id integer', 'ID number of the eBay site to receive this instruction.') do |ebay_site_id|
+      opts.on('-z', '--ebay-site-id integer', 'ID number of the eBay site hosting the categories.') do |ebay_site_id|
         options.ebay_site_id = ebay_site_id
       end
 

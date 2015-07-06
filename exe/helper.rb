@@ -39,6 +39,21 @@ end
 
 module ExecutableHelper
 
+  # Get a Hash mapping easy to remember names, such as eBay user IDs,
+  # to API auth tokens.
+  #
+  # Command line calls need only capture the key and this map will be used to
+  # look up the corresponding auth token.
+  #
+  # @return [Hash] a Hash with String keys mapping to auth token strings.
+  #
+  def production_auth_tokens
+    {
+        'rocks' => ENV['EBAY_API_AUTH_TOKEN_AR'],
+        'tokyo' => ENV['EBAY_API_AUTH_TOKEN_TT']
+    }
+  end
+
   #
   # Get an OpenStruct (similar to a hash) used to store command line options.
   # @return [OpenStruct] of options

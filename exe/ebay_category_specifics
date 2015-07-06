@@ -3,27 +3,28 @@
 require_relative './helper'
 include ExecutableHelper
 
-require_relative '../lib/ebay_trading_pack/get_categories'
+require_relative '../lib/ebay_trading_pack/get_category_specifics'
 include EbayTradingPack
 
-class Categories
+class CategorySpecifics
 
   def initialize
-    options.show_root_categories = false
     parse_args options
 
-    # Sending an unrecognized base category value ('all') to GetCategories
-    # will cause it to return all root categories for the site.
-    category_number = options.show_root_categories ? 'all' : ARGV.first
+    category_number = ARGV.first
 
-    # GetCategories is not specific to a particular eBay user,
+    # GetCategorySpecifics is not specific to a particular eBay user,
     # so any valid Auth Token can be used.
     auth_token = production_auth_tokens.values.first
 
-    categories = GetCategories.new(auth_token, category_number, ebay_site_id: options.ebay_site_id)
-    console categories.to_s
+    specifics = GetCategorySpecifics.new(auth_token, category_number, ebay_site_id: options.ebay_site_id)
+    result = specifics.to_s
+    if result.length == 0
+      console 'There are no specifics for this category', :red
+    else
+      console result
+    end
   end
-
 
   #---------------------------------------------------------------------------
   private
@@ -34,10 +35,6 @@ class Categories
       opts.banner = "Usage: #{File.basename(__FILE__)} [options] category_ID"
 
       opts.separator ''
-
-      opts.on('-a', '--all', 'Show all root categories.') do
-        options.show_root_categories = true
-      end
 
       opts.on('-z', '--ebay-site-id integer', 'ID number of the eBay site hosting the categories.') do |ebay_site_id|
         options.ebay_site_id = ebay_site_id
@@ -55,7 +52,7 @@ end
 #-----------------------------------------------------------------------------
 
 begin
-  Categories.new
+  CategorySpecifics.new
 rescue Exception => e
   console e.message, :red
   exit -1

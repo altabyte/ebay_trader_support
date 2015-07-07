@@ -1,5 +1,5 @@
-require "ebay_trading_pack/version"
+require 'ebay_trading_pack/version'
 
 module EbayTradingPack
-  # Your code goes here...
+  class EbayTradingError < RuntimeError; end
 end

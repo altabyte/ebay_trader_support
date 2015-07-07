@@ -67,7 +67,7 @@ module EbayTradingPack
       end
 
       @items = []
-      item_array = find([:unsold_list, :item_array, :item], [])
+      item_array = deep_find([:unsold_list, :item_array, :item], [])
       item_array = [item_array] unless item_array.is_a? Array
       item_array.each { |item_hash| @items << UnsoldItem.new(item_hash) }
     end

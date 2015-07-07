@@ -26,7 +26,7 @@ module EbayTradingPack
 
     def to_s
       string = ''
-      recommendations = find([:recommendations, :name_recommendation])
+      recommendations = deep_find([:recommendations, :name_recommendation])
       unless recommendations.nil?
         recommendations = [recommendations] unless recommendations.is_a? Array
         recommendations.each do |recommend|

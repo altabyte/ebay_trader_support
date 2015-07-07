@@ -42,7 +42,7 @@ module EbayTradingPack
         puts response_hash.to_yaml
       else
         @categories = {}
-        category_array = find(%w'category_array category')
+        category_array = deep_find(%w'category_array category')
         unless category_array.nil?
           category_array = [category_array] unless category_array.is_a? Array
           category_array.each do |category|

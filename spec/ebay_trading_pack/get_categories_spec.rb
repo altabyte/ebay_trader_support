@@ -80,6 +80,10 @@ describe GetCategories do
       expect(categories.warnings).to be_a(Array)
       expect(categories.warnings.count).to be 0
 
+      expect(categories.response_hash).to be_a Hash
+      expect(categories.response_hash).to be_a HashWithIndifferentAccess
+      expect(categories.response_hash).to respond_to :deep_find
+
       string =  categories.to_s
       expect(string).not_to be nil
       expect(string.length).to be > 0

@@ -1,34 +1,34 @@
-require 'ebay_trading/deep_find'
+require 'ebay_trading'
 
 module EbayTradingPack
   module ItemDetails
-    include EbayTrading::DeepFind
 
     # Get the eBay item ID, or nil if not found.
     # @return [Fixnum] eBay item ID.
     #
     def ebay_item_id
-      deep_find(details_hash, :item_id)
+      details_hash.deep_find(:item_id)
+      #details_hash.deep_find(:item_id)
     end
 
     # Get the item SKU, which is custom label in the UK.
     # @return [String] the item's SKU.
     #
     def sku
-      deep_find(details_hash, :sku)
+      details_hash.deep_find(:sku)
     end
     alias custom_label sku
 
     def title
-      deep_find(details_hash, :title)
+      details_hash.deep_find(:title)
     end
 
     def url
-      deep_find(details_hash, [:listing_detail, :view_item_url])
+      details_hash.deep_find([:listing_detail, :view_item_url])
     end
 
     def auction?
-      deep_find(details_hash, :listing_type) == 'Chinese'
+      details_hash.deep_find(:listing_type) == 'Chinese'
     end
 
     def fixed_price?
@@ -36,19 +36,19 @@ module EbayTradingPack
     end
 
     def bid_count
-      deep_find(details_hash, [:selling_status, :bid_count], 0)
+      details_hash.deep_find([:selling_status, :bid_count], 0)
     end
 
     def current_price
-      deep_find(details_hash, [:selling_status, :current_price])
+      details_hash.deep_find([:selling_status, :current_price])
     end
 
     def start_time
-      deep_find(details_hash, [:listing_details, :start_time])
+      details_hash.deep_find([:listing_details, :start_time])
     end
 
     def end_time
-      deep_find(details_hash, [:listing_details, :end_time])
+      details_hash.deep_find([:listing_details, :end_time])
     end
 
     def ended?
@@ -65,12 +65,12 @@ module EbayTradingPack
     # @return [Symbol] :active, :completed or :ended
     #
     def status
-      case deep_find details_hash, [:selling_status, :listing_status]
+      case details_hash.deep_find [:selling_status, :listing_status]
         when 'Active'    then :active
         when 'Completed' then :completed
         when 'Ended'     then :ended
         else
-          raise RequestError.new('Invalid item status')
+          raise EbayTradingError.new('Invalid item status')
       end
     end
 
@@ -80,7 +80,7 @@ module EbayTradingPack
     # @return [Fixnum, :GTC] the duration of the listing in days.
     #
     def duration
-      duration = deep_find(details_hash, :listing_duration)
+      duration = details_hash.deep_find(:listing_duration)
       return nil if duration.nil?
       return :GTC if duration == 'GTC'
       match = duration.match(/[0-9]+/)
@@ -97,7 +97,7 @@ module EbayTradingPack
     # @return [Array] of all photo URLs
     #
     def photo_urls
-      photos = deep_find(details_hash, [:picture_details, :picture_url])
+      photos = details_hash.deep_find([:picture_details, :picture_url])
       return [] if photos.nil?
       (photos.is_a?(Array)) ? photos : [photos]
     end
@@ -105,22 +105,22 @@ module EbayTradingPack
     # Get the number of page views for this listing.
     # @return [Fixnum] number of page hits, 0 if none or undetermined.
     def hit_count
-      deep_find(details_hash, :hit_count, 0)
+      details_hash.deep_find(:hit_count, 0)
     end
 
     # Count the number of people watching this listing.
     # @return [Fixnum] the number of watchers, or 0 if data not available.
     def watch_count
-      deep_find(details_hash, :watch_count, 0)
+      details_hash.deep_find(:watch_count, 0)
     end
 
     # Get the number of items sold from this listing.
     def quantity_sold
-      deep_find(details_hash, [:selling_status, :quantity_sold], 0)
+      details_hash.deep_find([:selling_status, :quantity_sold], 0)
     end
 
     def quantity_listed
-      deep_find(details_hash, :quantity, 0)
+      details_hash.deep_find(:quantity, 0)
     end
 
     #
@@ -129,7 +129,7 @@ module EbayTradingPack
     # @return [Fixnum] number available to sell.
     #
     def quantity_available
-      available = deep_find(details_hash, :quantity_available)
+      available = details_hash.deep_find(:quantity_available)
       if available.nil?
         return quantity_listed - quantity_sold
       else
@@ -140,22 +140,22 @@ module EbayTradingPack
     #-- Categories -------------------------------------------------------
 
     def category_1
-      cat = deep_find(details_hash, [:primary_category, :category_id])
+      cat = details_hash.deep_find([:primary_category, :category_id])
       cat.nil? ? nil : cat.to_i
     end
 
     def category_1_path
-      path = deep_find(details_hash, [:primary_category, :category_name])
+      path = details_hash.deep_find([:primary_category, :category_name])
       path.nil? ? [] : path.split(':')
     end
 
     def store_category_1
-      cat = deep_find(details_hash, [:store_front, :store_category_id])
+      cat = details_hash.deep_find([:store_front, :store_category_id])
       cat.nil? ? nil : cat.to_i
     end
 
     def store_category_2
-      cat = deep_find(details_hash, [:store_front, :store_category2_id])
+      cat = details_hash.deep_find([:store_front, :store_category2_id])
       cat.nil? ? nil : cat.to_i
     end
 
@@ -165,7 +165,7 @@ module EbayTradingPack
     # Determine if best offer is enabled on this listing
     #
     def best_offer?
-      deep_find(details_hash, [:best_offer_details, :best_offer_enabled], false)
+      details_hash.deep_find([:best_offer_details, :best_offer_enabled], false)
     end
 
     #
@@ -173,7 +173,7 @@ module EbayTradingPack
     #
     def best_offer_count
       return 0 unless best_offer?
-      deep_find(details_hash, [:best_offer_details, :best_offer_count], 0)
+      details_hash.deep_find([:best_offer_details, :best_offer_count], 0)
     end
 
     #
@@ -183,7 +183,7 @@ module EbayTradingPack
     #
     def best_offer_auto_accept_price
       return nil unless best_offer?
-      deep_find(details_hash, [:listing_details, :best_offer_auto_accept_price])
+      details_hash.deep_find([:listing_details, :best_offer_auto_accept_price])
     end
 
     #
@@ -193,7 +193,7 @@ module EbayTradingPack
     #
     def best_offer_minimum_accept_price
       return nil unless best_offer?
-      deep_find(details_hash, [:listing_details, :minimum_best_offer_price])
+      details_hash.deep_find([:listing_details, :minimum_best_offer_price])
     end
 
     #
@@ -209,7 +209,7 @@ module EbayTradingPack
     # @return [Hash, nil]
     #
     def promotional_sale
-      sale = deep_find(details_hash, [:selling_status, :promotional_sale_details])
+      sale = details_hash.deep_find([:selling_status, :promotional_sale_details])
       return nil if sale.nil?
       details = {}
       details[:original_price] = sale[:original_price]
@@ -238,7 +238,7 @@ module EbayTradingPack
           minutes: 0,
           seconds: 0
       }
-      time = deep_find(details_hash, :time_left)
+      time = details_hash.deep_find(:time_left)
       unless time.nil?
         matcher = time.match(/P([0-9]+D)?T([0-9]+H)?([0-9]+M)?([0-9]+S)?/i)
         if matcher
@@ -276,11 +276,11 @@ module EbayTradingPack
     # @return [Fixnum, nil] the parent ID or nil if this item is not a re-list.
     #
     def relist_parent_id
-      deep_find(details_hash, :relist_parent_id)
+      details_hash.deep_find(:relist_parent_id)
     end
 
     def relisted?
-      deep_find(details_hash, :relisted, false)
+      details_hash.deep_find(:relisted, false)
     end
 
     #
@@ -288,7 +288,7 @@ module EbayTradingPack
     # @return [Fixnum, nil] the eBay ID of the child re-list
     #
     def relist_child_id
-      deep_find(details_hash, [:listing_details, :relisted_item_id])
+      details_hash.deep_find([:listing_details, :relisted_item_id])
     end
 
     # Get a Hash of items specifics, where all keys and values Strings.
@@ -298,7 +298,7 @@ module EbayTradingPack
     #
     def item_specifics
       hash = {}
-      specifics = deep_find(details_hash, [:item_specifics, :name_value_list], [])
+      specifics = details_hash.deep_find([:item_specifics, :name_value_list], [])
       specifics = [specifics] unless specifics.is_a?(Array)
       specifics.each { |details| hash[details[:name]] = details[:value] }
       hash
@@ -321,7 +321,7 @@ module EbayTradingPack
     # @return [Array] of variation details
     #
     def variations
-      raw_variations = deep_find(details_hash, [:variety, :variations])
+      raw_variations = details_hash.deep_find([:variety, :variations])
       list = []
       return list if raw_variations.nil?
       raw_variations = [raw_variations] unless raw_variations.is_a?(Array)

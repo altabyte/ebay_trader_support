@@ -1,0 +1,119 @@
+#!/usr/bin/env ruby
+
+require 'active_support/time'
+
+require_relative './helper'
+include ExecutableHelper
+
+require_relative '../lib/ebay_trading_pack/get_unsold_items'
+include EbayTradingPack
+
+class Unsold
+
+  PER_PAGE = 200
+
+  def initialize
+    options.send('relisted?=',     false)
+    options.send('not_relisted?=', false)
+    parse_args options
+
+    page_number = 0
+    items = []
+
+    username = options.username.downcase
+    raise EbayTradingError, "User ID '#{options.username}' is not valid" unless production_auth_tokens.key?(username)
+    auth_token = production_auth_tokens[username]
+
+    time = Time.now
+    begin
+      unsold = GetUnsoldItems.new(auth_token, page_number += 1, per_page: PER_PAGE)
+      raise unsold.errors.first[:short_message] if unsold.has_errors?
+      items.concat unsold.items
+    end while unsold.has_more_items?
+    @run_time_in_seconds = Time.now - time
+
+    items.delete_if { |item| options.relisted?     && !item.relisted? }
+    items.delete_if { |item| options.not_relisted? &&  item.relisted? }
+    items.delete_if do |item|
+      unless options.item_end_date.nil?
+        # http://api.rubyonrails.org/classes/ActiveSupport/TimeZone.html
+        uk_item_end_time = ActiveSupport::TimeZone.new('Europe/London').utc_to_local(item.end_time)
+        !options.item_end_date.strftime('%Y-%m-%d').eql?(uk_item_end_time.strftime('%Y-%m-%d'))
+      end
+    end
+
+    items.sort_by! { |item| item.watch_count }
+    items.reverse!
+
+    ARGV << 'ebay_id' if ARGV.empty?
+    fields = ARGV.map { |arg| arg.downcase.to_sym }
+
+    lines = []
+    items.each do |item|
+      line = ''
+      fields.each do |field|
+        line << "\t" unless line.blank?
+        case field
+          when :ebay_id  then line << "#{item.ebay_item_id}"
+          when :sku      then line << "#{item.sku}"
+          when :watchers then line << "#{item.watch_count}"
+          when :quantity then line << "#{item.quantity_available}"
+        end
+      end
+      lines << line
+    end
+
+    lines.sort!.reverse!
+    console lines.join("\n")
+    console "\n#{lines.count} unsold items for '#{options.username}'."
+  end
+
+  #---------------------------------------------------------------------------
+  private
+
+  def parse_args(options)
+    ARGV << '-h' if ARGV.empty?
+    option_parser = OptionParser.new do |opts|
+      opts.banner = "Usage: #{File.basename(__FILE__)} [options] [ebay_id|sku|quantity|watchers]"
+
+      opts.separator ''
+      opts.separator 'Required options:'
+      opts.on('-u', '--user username', '.') do |username|
+        options.username = username
+      end
+
+      opts.separator ''
+      opts.separator 'Additional options:'
+
+      opts.on('-d', '--end-date date', 'The local-time date on which unsold items ended.') do |date_arg|
+        begin
+          options.item_end_date = DateTime.parse(date_arg)
+        rescue
+          raise "Failed to understand item end date '#{date_arg}'"
+        end
+      end
+
+      opts.on('--[no-]relisted', 'Relisted items') do |relisted|
+        options.send('relisted?=',     true) if  relisted
+        options.send('not_relisted?=', true) if !relisted
+      end
+
+      opts.on('-z', '--ebay-site-id integer', 'ID number of the eBay site to receive this instruction.') do |ebay_site_id|
+        options.ebay_site_id = ebay_site_id
+      end
+
+      opts.on('-h', '-?', '--help', 'Display this screen.') do
+        raise opts.to_s
+      end
+    end
+    option_parser.parse!
+  end
+end
+
+#-----------------------------------------------------------------------------
+begin
+  Unsold.new
+rescue Exception => e
+  console e.message, :red
+  exit -1
+end

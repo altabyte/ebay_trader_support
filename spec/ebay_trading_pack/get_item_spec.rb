@@ -33,9 +33,9 @@ describe GetItem do
       is_expected.not_to be_nil
       is_expected.not_to be_success
       is_expected.to have_errors
-      expect(item.details_hash).not_to be_nil
-      expect(item.details_hash).to be_a_kind_of(Hash)
-      expect(item.details_hash).to be_empty
+      expect(item.item_hash).not_to be_nil
+      expect(item.item_hash).to be_a_kind_of(Hash)
+      expect(item.item_hash).to be_empty
 
       puts "Request took #{item.response_time} seconds"
     end
@@ -62,12 +62,12 @@ describe GetItem do
     it { is_expected.not_to have_errors }
     it { is_expected.not_to have_warnings }
 
-    it { expect(item.details_hash).not_to be_nil }
-    it { expect(item.details_hash).to be_a Hash }
+    it { expect(item.item_hash).not_to be_nil }
+    it { expect(item.item_hash).to be_a Hash }
 
     it {
       # puts item.to_s(2)  # Print response XML indented with 2 spaces
-      puts JSON.pretty_generate item.details_hash
+      puts JSON.pretty_generate item.item_hash
       puts "Request took #{item.response_time} seconds"
     }
 

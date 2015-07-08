@@ -122,10 +122,10 @@ module EbayTradingPack
   class UnsoldItem
     include ItemDetails
 
-    attr_reader :details_hash
+    attr_reader :item_hash
 
     def initialize(item_hash)
-      @details_hash = item_hash
+      @item_hash = item_hash
     end
 
     def status
@@ -137,7 +137,7 @@ module EbayTradingPack
     # This method is required by the Item mixin.
     #
     def to_hash
-      @details_hash
+      @item_hash
     end
   end
 end

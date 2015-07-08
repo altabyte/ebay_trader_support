@@ -33,7 +33,7 @@ module EbayTradingPack
       @include_description
     end
 
-    def details_hash
+    def item_hash
       response_hash[:item] || {}
     end
 

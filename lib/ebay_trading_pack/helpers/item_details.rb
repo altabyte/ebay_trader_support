@@ -1,71 +1,110 @@
 require 'ebay_trading'
 
 module EbayTradingPack
+
+  # A collection of helper methods to extract details from a single item hash.
+  # Classes wishing to include this module must expose the original eBay API
+  # response item details with a +*item_hash*+ method.
+  #
+  # Note: Methods in this module make extensive use of the +deep_find+ method.
+  # This has been mixed into the +HashWithIndifferentAccess+ class defined
+  # in the {https://github.com/altabyte/ebay_trading ebay-trading} gem.
   module ItemDetails
 
-    # Get the eBay item ID, or nil if not found.
+    # Get the eBay item ID of this listing.
     # @return [Fixnum] eBay item ID.
     #
     def ebay_item_id
-      details_hash.deep_find(:item_id)
-      #details_hash.deep_find(:item_id)
+      item_hash.deep_find(:item_id)
     end
 
-    # Get the item SKU, which is custom label in the UK.
+    # Get the item SKU, which is called custom label in the UK.
     # @return [String] the item's SKU.
     #
     def sku
-      details_hash.deep_find(:sku)
+      item_hash.deep_find(:sku)
     end
     alias custom_label sku
 
+    # Get the title text of this item listing.
+    # @return [String] the item's title.
+    #
     def title
-      details_hash.deep_find(:title)
+      item_hash.deep_find(:title)
     end
 
+    # Get the public URL of this item on eBay's web site.
+    # @return [String] the item listing URL.
+    #
     def url
-      details_hash.deep_find([:listing_detail, :view_item_url])
+      item_hash.deep_find([:listing_detail, :view_item_url])
     end
 
+    # Determine if this is an auction format listing.
+    # @return [Boolean] true if auction.
+    #
     def auction?
-      details_hash.deep_find(:listing_type) == 'Chinese'
+      item_hash.deep_find(:listing_type) == 'Chinese'
     end
 
+    # Determine if this is a fixed-price buy-it-now format listing.
+    # @return [Boolean] true if not auction format.
+    #
     def fixed_price?
       !auction?
     end
 
+    # Get the number of bids on this listing. This will always be 0
+    # unless it is an {#auction?} listing.
+    # @return [Fixnum] the number of bids.
+    #
     def bid_count
-      details_hash.deep_find([:selling_status, :bid_count], 0)
+      item_hash.deep_find([:selling_status, :bid_count], 0)
     end
 
+    # The item's current selling price.
+    # If this item is currently on {#promotional_sale?} the current price
+    # will be the discounted price.
+    # @return [Money] the selling price.
+    #
     def current_price
-      details_hash.deep_find([:selling_status, :current_price])
+      item_hash.deep_find([:selling_status, :current_price])
     end
 
+    # Get the start time of this listing.
+    # @return [Time] the listing start time.
+    #
     def start_time
-      details_hash.deep_find([:listing_details, :start_time])
+      item_hash.deep_find([:listing_details, :start_time])
     end
 
+    # Get the listing end time.
+    # @return [Time] the listing end time.
+    #
     def end_time
-      details_hash.deep_find([:listing_details, :end_time])
+      item_hash.deep_find([:listing_details, :end_time])
     end
 
+    # Determine if this listing has now ended.
+    # @return [Boolean] true if listing has ended.
+    #
     def ended?
-      end_time < Time.now
+      end_time < Time.now.utc
     end
 
+    # Determine if this item is currently active.
+    # @return [Boolean] true if an active listing.
+    #
     def active?
       return false if status != :active
       !ended?
     end
 
-
     # Get the item selling status.
     # @return [Symbol] :active, :completed or :ended
     #
     def status
-      case details_hash.deep_find [:selling_status, :listing_status]
+      case item_hash.deep_find [:selling_status, :listing_status]
         when 'Active'    then :active
         when 'Completed' then :completed
         when 'Ended'     then :ended
@@ -74,53 +113,60 @@ module EbayTradingPack
       end
     end
 
-    #
     # Get the duration of this listing, which will be one of 1, 3, 5, 7, 10, 30 or :GTC
     # 0 will be returned if a duration cannot be determined.
-    # @return [Fixnum, :GTC] the duration of the listing in days.
+    # @return [Fixnum|:GTC] the duration of the listing in days.
     #
     def duration
-      duration = details_hash.deep_find(:listing_duration)
+      duration = item_hash.deep_find(:listing_duration)
       return nil if duration.nil?
       return :GTC if duration == 'GTC'
       match = duration.match(/[0-9]+/)
       return match.nil? ? 0 : match[0].to_i
     end
 
-    # Determine if this is a GTC listing.
+    # Determine if this is a Good Time Cancelled [GTC] listing.
+    # @return [Boolean] true if GTC.
     #
     def gtc?
       duration == :GTC
     end
 
     # Get an array of eBay hosted photo URLs
-    # @return [Array] of all photo URLs
+    # @return [Array[String]] of all photo URLs
     #
     def photo_urls
-      photos = details_hash.deep_find([:picture_details, :picture_url])
+      photos = item_hash.deep_find([:picture_details, :picture_url])
       return [] if photos.nil?
       (photos.is_a?(Array)) ? photos : [photos]
     end
 
     # Get the number of page views for this listing.
     # @return [Fixnum] number of page hits, 0 if none or undetermined.
+    #
     def hit_count
-      details_hash.deep_find(:hit_count, 0)
+      item_hash.deep_find(:hit_count, 0)
     end
 
     # Count the number of people watching this listing.
     # @return [Fixnum] the number of watchers, or 0 if data not available.
+    #
     def watch_count
-      details_hash.deep_find(:watch_count, 0)
+      item_hash.deep_find(:watch_count, 0)
     end
 
-    # Get the number of items sold from this listing.
+    # Get the number of items sold from this item listing.
+    # @return [Fixnum] the number sold.
+    #
     def quantity_sold
-      details_hash.deep_find([:selling_status, :quantity_sold], 0)
+      item_hash.deep_find([:selling_status, :quantity_sold], 0)
     end
 
+    # Get the quantity of items originally listed.
+    # @return [Fixnum] the number of item listed.
+    #
     def quantity_listed
-      details_hash.deep_find(:quantity, 0)
+      item_hash.deep_find(:quantity, 0)
     end
 
     #
@@ -129,7 +175,7 @@ module EbayTradingPack
     # @return [Fixnum] number available to sell.
     #
     def quantity_available
-      available = details_hash.deep_find(:quantity_available)
+      available = item_hash.deep_find(:quantity_available)
       if available.nil?
         return quantity_listed - quantity_sold
       else
@@ -139,64 +185,75 @@ module EbayTradingPack
 
     #-- Categories -------------------------------------------------------
 
+    # Get the name of the primary category.
+    # @return [String] the primary category name.
+    #
     def category_1
-      cat = details_hash.deep_find([:primary_category, :category_id])
+      cat = item_hash.deep_find([:primary_category, :category_id])
       cat.nil? ? nil : cat.to_i
     end
 
+    # Get the primary category path.
+    # @return [String] path to category.
+    #
     def category_1_path
-      path = details_hash.deep_find([:primary_category, :category_name])
+      path = item_hash.deep_find([:primary_category, :category_name])
       path.nil? ? [] : path.split(':')
     end
 
+    # Get the store primary category ID.
+    # @return [Fixnum] the ID number of the primary store category.
+    #
     def store_category_1
-      cat = details_hash.deep_find([:store_front, :store_category_id])
+      cat = item_hash.deep_find([:store_front, :store_category_id])
       cat.nil? ? nil : cat.to_i
     end
 
+    # Get the store secondary category ID.
+    # @return [Fixnum] the ID number of the second store category.
+    #
     def store_category_2
-      cat = details_hash.deep_find([:store_front, :store_category2_id])
+      cat = item_hash.deep_find([:store_front, :store_category2_id])
       cat.nil? ? nil : cat.to_i
     end
 
 
     #-- Best Offer -------------------------------------------------------
-    #
-    # Determine if best offer is enabled on this listing
+
+    # Determine if this item listing has best offer feature enabled.
+    # @return [Boolean] true if has best offer.
     #
     def best_offer?
-      details_hash.deep_find([:best_offer_details, :best_offer_enabled], false)
+      item_hash.deep_find([:best_offer_details, :best_offer_enabled], false)
     end
 
-    #
     # Get the number of best offers placed on this item.
+    # @return [Fixnum] the number of offers.
     #
     def best_offer_count
       return 0 unless best_offer?
-      details_hash.deep_find([:best_offer_details, :best_offer_count], 0)
+      item_hash.deep_find([:best_offer_details, :best_offer_count], 0)
     end
 
-    #
+
     # Get the best offer automatic accept price.
     # Note: when using GetSellerList ensure :granularity is set to fine.
     # @return [Money, nil]
     #
     def best_offer_auto_accept_price
       return nil unless best_offer?
-      details_hash.deep_find([:listing_details, :best_offer_auto_accept_price])
+      item_hash.deep_find([:listing_details, :best_offer_auto_accept_price])
     end
 
-    #
     # Get the minimum best offer price, below which offers will be automatically rejected.
     # Note: when using GetSellerList ensure :granularity is set to fine.
     # @return [Money, nil]
     #
     def best_offer_minimum_accept_price
       return nil unless best_offer?
-      details_hash.deep_find([:listing_details, :minimum_best_offer_price])
+      item_hash.deep_find([:listing_details, :minimum_best_offer_price])
     end
 
-    #
     # Determine if this listing has a promotional sale.
     # @return [boolean] true if this item is in a promotion.
     #
@@ -204,12 +261,11 @@ module EbayTradingPack
       !promotional_sale.nil?
     end
 
-    #
     # Get details of the promotional sale, if any, setup my the mark-down manager.
     # @return [Hash, nil]
     #
     def promotional_sale
-      sale = details_hash.deep_find([:selling_status, :promotional_sale_details])
+      sale = item_hash.deep_find([:selling_status, :promotional_sale_details])
       return nil if sale.nil?
       details = {}
       details[:original_price] = sale[:original_price]
@@ -218,19 +274,20 @@ module EbayTradingPack
       details
     end
 
-    #
     # Determine if this item is on sale now, ie, the current time is between the promotion
     # start and end times.
-    #
+    # @return [Boolean] true if on sale.
     def on_sale_now?
       details = promotional_sale
       return false if details.nil?
-      return Time.now >= details[:start_time] && Time.now <= details[:end_time]
+      return Time.now.utc >= details[:start_time] && Time.now.utc <= details[:end_time]
     end
 
 
-    #Get a Hash describing the amount of time remaining for this listing.
+    # Get a Hash describing the amount of time remaining for this listing.
     # The duration is represented in the ISO 8601 duration format (PnYnMnDTnHnMnS).
+    # @return [Hash] with the keys days, hours, minutes and seconds.
+    #
     def time_left
       time_left = {
           days:    0,
@@ -238,7 +295,7 @@ module EbayTradingPack
           minutes: 0,
           seconds: 0
       }
-      time = details_hash.deep_find(:time_left)
+      time = item_hash.deep_find(:time_left)
       unless time.nil?
         matcher = time.match(/P([0-9]+D)?T([0-9]+H)?([0-9]+M)?([0-9]+S)?/i)
         if matcher
@@ -251,6 +308,9 @@ module EbayTradingPack
       time_left
     end
 
+    # Get the time remaining in seconds.
+    # @note This is based upon the TimeLeft element in the response XML and is NOT real-time accurate.
+    # @return [Fixnum] seconds remaining until this listing expires.
     def time_left_in_seconds
       seconds =  time_left[:seconds]
       seconds += time_left[:minutes] * 60
@@ -260,7 +320,9 @@ module EbayTradingPack
     end
 
     # Get a string representation of the amount of time remaining in days,
-    # minutes and seconds.
+    # minutes and seconds. This could be useful for rendering on a web page.
+    # @return [String] summary of days, hours and minutes remaining.
+    #
     def time_left_to_s
       string = ''
       string << "#{time_left[:days].to_s.rjust 2}d " if time_left[:days] > 0
@@ -271,24 +333,25 @@ module EbayTradingPack
 
 
     #-- Re-listing -------------------------------------------------------
-    #
+
     # Get the eBay ID of the parent item from which this has been re-listed, if any.
     # @return [Fixnum, nil] the parent ID or nil if this item is not a re-list.
     #
     def relist_parent_id
-      details_hash.deep_find(:relist_parent_id)
+      item_hash.deep_find(:relist_parent_id)
     end
 
+    # Determine if this listing has been relisted from a previously expired listing.
+    # @return [Boolean] true if relisted.
     def relisted?
-      details_hash.deep_find(:relisted, false)
+      item_hash.deep_find(:relisted, false)
     end
 
-    #
     # If this item has since been re-listed, return the eBay ID of the new listing derived from this one.
     # @return [Fixnum, nil] the eBay ID of the child re-list
     #
     def relist_child_id
-      details_hash.deep_find([:listing_details, :relisted_item_id])
+      item_hash.deep_find([:listing_details, :relisted_item_id])
     end
 
     # Get a Hash of items specifics, where all keys and values Strings.
@@ -298,30 +361,27 @@ module EbayTradingPack
     #
     def item_specifics
       hash = {}
-      specifics = details_hash.deep_find([:item_specifics, :name_value_list], [])
+      specifics = item_hash.deep_find([:item_specifics, :name_value_list], [])
       specifics = [specifics] unless specifics.is_a?(Array)
       specifics.each { |details| hash[details[:name]] = details[:value] }
       hash
     end
 
     #-- Variations -------------------------------------------------------
-    #
-    # The key of this field has been renamed from 'Variations'
-    # to 'VariationsSet' in helpers/doctor_item_hash.rb
-    #
+
     # Determine if this listing has any variations.
+    # @return [Boolean] true if there are variations in this listing.
     #
     def has_variations?
-      details_hash.key?(:variety)
+      item_hash.key?(:variety)
     end
 
-    #
     # Get an array of variation details using SKUs as keys.
     # If there are no variations an empty array will be returned.
     # @return [Array] of variation details
     #
     def variations
-      raw_variations = details_hash.deep_find([:variety, :variations])
+      raw_variations = item_hash.deep_find([:variety, :variations])
       list = []
       return list if raw_variations.nil?
       raw_variations = [raw_variations] unless raw_variations.is_a?(Array)
@@ -375,8 +435,8 @@ module EbayTradingPack
         original_price = promotional_sale[:original_price]
         string << "\n      "
         string << 'ON SALE NOW!'   if on_sale_now?
-        string << 'was on sale'    if DateTime.now > ends
-        string << 'sale scheduled' if DateTime.now < starts
+        string << 'was on sale'    if Time.now.utc > ends
+        string << 'sale scheduled' if Time.now.utc < starts
         string << " original price #{original_price.symbol}#{original_price.to_s}"
         string << "  #{starts.strftime('%H:%M %A')}"
         string << " until #{ends.strftime('%H:%M %A')}"
@@ -404,7 +464,7 @@ module EbayTradingPack
 
       string << "\n   "
       if gtc?
-        date_time = (Time.now < end_time) ? Time.now : end_time
+        date_time = (Time.now.utc < end_time) ? Time.now.utc : end_time
         days = (date_time - start_time).round.to_i
         if days > 1
           string << "GTC [#{days} days]"

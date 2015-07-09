@@ -66,6 +66,10 @@ module EbayTradingPack
         @duration_in_days = 60 if @duration_in_days > 60
       end
 
+      skip_type_casting = args[:skip_type_casting] || []
+      skip_type_casting.concat [:sku, :postal_code]
+      args[:skip_type_casting] = skip_type_casting
+
       known_arrays = args[:known_arrays] || []
       known_arrays.concat [:item, :shipping_service_options, :variation]
       args[:known_arrays] = known_arrays

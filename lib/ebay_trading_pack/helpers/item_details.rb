@@ -37,7 +37,7 @@ module EbayTradingPack
     # @return [String] the item listing URL.
     #
     def url
-      item_hash.deep_find([:listing_detail, :view_item_url])
+      item_hash.deep_find([:listing_details, :view_item_url])
     end
 
     # Determine if this is an auction format listing.

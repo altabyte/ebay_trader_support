@@ -49,8 +49,8 @@ module ExecutableHelper
   #
   def production_auth_tokens
     {
-        'rocks' => ENV['EBAY_API_AUTH_TOKEN_AR'],
-        'tokyo' => ENV['EBAY_API_AUTH_TOKEN_TT']
+        'AR' => ENV['EBAY_API_AUTH_TOKEN_AR'],
+        'TT' => ENV['EBAY_API_AUTH_TOKEN_TT']
     }
   end
 

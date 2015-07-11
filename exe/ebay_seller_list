@@ -1,0 +1,141 @@
+#!/usr/bin/env ruby
+
+require 'active_support/time'
+require 'json'
+
+require_relative './helper'
+include ExecutableHelper
+
+require_relative '../lib/ebay_trading_pack/get_seller_list'
+include EbayTradingPack
+
+class SellerList
+
+  PER_PAGE = 200
+
+  attr_reader :number_of_pages
+
+  def initialize
+    options.seller_id = nil
+    options.output = :csv
+    parse_args options
+
+    page_number = 0
+    @items = []
+
+    username = options.username.upcase
+    raise EbayTradingError, "User ID '#{options.username}' is not valid" unless production_auth_tokens.key?(username)
+    auth_token = production_auth_tokens[username]
+
+    args = {
+        per_page: PER_PAGE,
+        seller_id: options.seller_id,
+        http_timeout: 90
+    }
+    time = Time.now
+
+    begin # Loop
+      page_number += 1
+
+      message = "# Getting page number #{page_number}"
+      message << " of #{number_of_pages}" if number_of_pages
+      console message, "\r"
+
+      seller_list = GetSellerList.new(auth_token, page_number, args)
+      raise seller_list.errors.first[:short_message] if seller_list.has_errors?
+      @items.concat seller_list.items
+
+      @number_of_pages = seller_list.total_number_of_pages
+    end while seller_list.has_more_items?
+    @run_time_in_seconds = Time.now - time
+
+    @items.sort_by! { |item| item.quantity_sold }
+    @items.reverse!
+
+    puts (options.output.to_s == 'json' ? to_json : to_csv)
+  end
+
+  def to_json
+    json_items = []
+    @items.each do |item|
+      json_items << JSON.pretty_generate(item.to_hash)
+    end
+    "[#{json_items.join(",\n")}]"
+  end
+
+  def to_csv(separator = "\t")
+    headers = ['SKU', 'Item ID', 'Duration', 'Format', 'Status', 'Qty Listed', 'Qty Sold', 'Days listed', 'Price', 'Variations', 'On Sale', 'Best Offer', 'Title', 'Site']
+    csv = "#{headers.join(separator)}\n"
+    @items.each do |item|
+      fields = []
+      fields << item.sku
+      fields << item.ebay_item_id
+      fields << item.duration
+      fields << (item.auction? ? 'Auction' : 'BIN')
+      fields << item.status
+      fields << item.quantity_listed
+      fields << item.quantity_sold
+      fields << ((Time.now - item.start_time) / (60  * 60 * 24)).floor.to_i
+      fields << item.current_price.to_s
+
+      fields << item.variations.count
+      fields << (item.promotional_sale? ? 'Yes' : 'No')
+      fields << (item.best_offer? ? 'Yes' : 'No')
+
+      fields << "\"#{item.title}\""
+      fields << item.item_hash.deep_find(:site, 'NA')
+
+      csv << "#{fields.join(separator)}\n"
+    end
+    csv
+  end
+
+  #---------------------------------------------------------------------------
+  private
+
+  def parse_args(options)
+    ARGV << '-h' if ARGV.empty?
+    option_parser = OptionParser.new do |opts|
+      opts.banner = "Usage: #{File.basename(__FILE__)} [options] [ebay_id|sku|quantity|watchers]"
+
+      opts.separator ''
+      opts.separator 'Required options:'
+      opts.on('-u', '--user username', '.') do |username|
+        options.username = username
+      end
+
+      opts.separator ''
+      opts.separator 'Additional options:'
+
+      opts.on('-o', '--output format', [:csv, :json], 'Output format (CSV or JSON)') do |format|
+        options.output = format
+      end
+
+      opts.on('-s', '--seller username', 'The seller eBay username if not me.') do |seller_id|
+        options.seller_id = seller_id
+      end
+
+      opts.on('-v', '--[no-]verbose', 'Run verbosely') do |v|
+        options[:verbose] = v
+      end
+
+      opts.on('-z', '--ebay-site-id integer', 'ID number of the eBay site to receive this instruction.') do |ebay_site_id|
+        options.ebay_site_id = ebay_site_id
+      end
+
+      opts.on('-h', '-?', '--help', 'Display this screen.') do
+        raise opts.to_s
+      end
+    end
+    option_parser.parse!
+  end
+end
+
+
+#-----------------------------------------------------------------------------
+begin
+  SellerList.new
+rescue Exception => e
+  console e.message, :red
+  exit -1
+end

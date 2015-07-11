@@ -373,7 +373,7 @@ module EbayTradingPack
     # @return [Boolean] true if there are variations in this listing.
     #
     def has_variations?
-      item_hash.key?(:variety)
+      item_hash.key?(:variations)
     end
 
     # Get an array of variation details using SKUs as keys.
@@ -381,7 +381,7 @@ module EbayTradingPack
     # @return [Array] of variation details
     #
     def variations
-      raw_variations = item_hash.deep_find([:variety, :variations])
+      raw_variations = item_hash.deep_find([:variations, :variation])
       list = []
       return list if raw_variations.nil?
       raw_variations = [raw_variations] unless raw_variations.is_a?(Array)
@@ -390,7 +390,7 @@ module EbayTradingPack
         next if sku.nil? || sku.strip.length == 0
         price = variation[:start_price]
         quantity_listed = variation[:quantity].to_i
-        selling_status_sold = deep_find(variation, [:selling_status, :quantity_sold])
+        selling_status_sold = variation.deep_find([:selling_status, :quantity_sold])
         quantity_sold = selling_status_sold.nil? ? 0 : selling_status_sold.to_i
         quantity_available = quantity_listed - quantity_sold
         list << { sku: sku.strip,

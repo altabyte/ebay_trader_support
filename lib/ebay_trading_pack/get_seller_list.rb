@@ -137,7 +137,7 @@ module EbayTradingPack
         #DetailLevel 'ReturnAll'
         GranularityLevel granularity
         IncludeWatchCount 'true'
-        #IncludeVariations 'true'
+        IncludeVariations 'true'
 
         if based_on_end_time?
           EndTimeFrom time_from.to_s

@@ -13,14 +13,16 @@ class Unsold
   PER_PAGE = 200
 
   def initialize
-    options.send('relisted?=',     false)
-    options.send('not_relisted?=', false)
+    options.send('relisted?=',         false)
+    options.send('not_relisted?=',     false)
+    options.send('auction_only?=',     false)
+    options.send('fixed_price_only?=', false)
     parse_args options
 
     page_number = 0
     items = []
 
-    username = options.username.downcase
+    username = options.username.upcase
     raise EbayTradingError, "User ID '#{options.username}' is not valid" unless production_auth_tokens.key?(username)
     auth_token = production_auth_tokens[username]
 
@@ -32,6 +34,8 @@ class Unsold
     end while unsold.has_more_items?
     @run_time_in_seconds = Time.now - time
 
+    items.delete_if { |item| options.auction_only? && !item.auction? }
+    items.delete_if { |item| options.fixed_price_only? && !item.fixed_price? }
     items.delete_if { |item| options.relisted?     && !item.relisted? }
     items.delete_if { |item| options.not_relisted? &&  item.relisted? }
     items.delete_if do |item|
@@ -93,9 +97,19 @@ class Unsold
         end
       end
 
-      opts.on('--[no-]relisted', 'Relisted items') do |relisted|
+      opts.on('--[no-]relisted', 'Relisted items.') do |relisted|
         options.send('relisted?=',     true) if  relisted
         options.send('not_relisted?=', true) if !relisted
+      end
+
+      opts.on('--auction', 'Auction items only.') do
+        options.send('auction_only?=',     true)
+        options.send('fixed_price_only?=', false)
+      end
+
+      opts.on('--fixed-price', 'Fixed price items only.') do
+        options.send('fixed_price_only?=', true)
+        options.send('auction_only?=',     false)
       end
 
       opts.on('-z', '--ebay-site-id integer', 'ID number of the eBay site to receive this instruction.') do |ebay_site_id|

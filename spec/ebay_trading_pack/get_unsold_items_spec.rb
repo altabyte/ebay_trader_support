@@ -39,9 +39,11 @@ describe GetUnsoldItems do
     subject(:unsold) { @unsold }
 
     it {
-      #puts "#{unsold.xml_request}\n\n"
-      #puts "#{unsold.to_s(2)}\n\n"
-      puts "#{JSON.pretty_generate unsold.response_hash[:unsold_list]}\n\n"
+      unless unsold.count == 0
+        #puts "#{unsold.xml_request}\n\n"
+        #puts "#{unsold.to_s(2)}\n\n"
+        puts "#{JSON.pretty_generate unsold.response_hash[:unsold_list]}\n\n"
+      end
     }
 
     it { is_expected.not_to be_nil }

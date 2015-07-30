@@ -8,9 +8,9 @@ require 'ebay_trading/request'
 
 begin
 
-  # GeteBayOfficialTime call is not specific to any particular user, so can
-  # use any valid Auth Token.
-  auth_token = production_auth_tokens.values.first
+  # GeteBayOfficialTime is not specific to a particular eBay user,
+  # so any valid Authentication Token can be used.
+  auth_token = generic_auth_token
 
   # Execute the request...
   request = EbayTrading::Request.new('GeteBayOfficialTime', auth_token)

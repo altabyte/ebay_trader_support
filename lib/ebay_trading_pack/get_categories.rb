@@ -37,7 +37,7 @@ module EbayTradingPack
     # If full is true it will render the entire response hash in YAML format.
     #
     def to_s(full = false)
-      raise RequestError, 'Unable to obtain category information!' unless success?
+      raise EbayTradingError, errors.first[:long_message] unless success?
       if full
         puts response_hash.to_yaml
       else

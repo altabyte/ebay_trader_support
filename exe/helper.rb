@@ -9,6 +9,12 @@ EbayTrading.configure do |config|
   config.dev_id  = ENV['EBAY_API_DEV_ID']
   config.app_id  = ENV['EBAY_API_APP_ID']
   config.cert_id = ENV['EBAY_API_CERT_ID']
+
+  config.store_auth_token(ENV['EBAY_API_USERNAME_AR'], ENV['EBAY_API_AUTH_TOKEN_AR'])
+  config.store_auth_token(ENV['EBAY_API_USERNAME_TT'], ENV['EBAY_API_AUTH_TOKEN_TT'])
+
+  # Sandbox test user 1
+  config.store_auth_token(ENV['EBAY_API_USERNAME_T1'], ENV['EBAY_API_AUTH_TOKEN_T1'])
 end
 
 require 'optparse' # OptionParser is a class for command-line option analysis
@@ -39,19 +45,14 @@ end
 
 module ExecutableHelper
 
-  # Get a Hash mapping easy to remember names, such as eBay user IDs,
-  # to API auth tokens.
+  # Get a generic auth_token that can be used with user independent
+  # calls, such as GetCategories.
   #
-  # Command line calls need only capture the key and this map will be used to
-  # look up the corresponding auth token.
+  # @return [String] the authentication token for a valid eBay user.
   #
-  # @return [Hash] a Hash with String keys mapping to auth token strings.
-  #
-  def production_auth_tokens
-    {
-        'AR' => ENV['EBAY_API_AUTH_TOKEN_AR'],
-        'TT' => ENV['EBAY_API_AUTH_TOKEN_TT']
-    }
+  def generic_auth_token
+    username = ENV['EBAY_API_USERNAME_TT']
+    EbayTrading.configuration.auth_token_for(username)
   end
 
   #

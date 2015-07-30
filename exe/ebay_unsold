@@ -22,9 +22,9 @@ class Unsold
     page_number = 0
     items = []
 
-    username = options.username.upcase
-    raise EbayTradingError, "User ID '#{options.username}' is not valid" unless production_auth_tokens.key?(username)
-    auth_token = production_auth_tokens[username]
+    username = options.username
+    auth_token = EbayTrading.configuration.auth_token_for(username)
+    raise "eBay username '#{username}' is not valid" if auth_token.nil?
 
     time = Time.now
     begin

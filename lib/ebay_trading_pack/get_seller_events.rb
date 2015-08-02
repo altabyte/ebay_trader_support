@@ -46,9 +46,12 @@ module EbayTradingPack
       @time_to = time_to.utc
       raise RequestError('Time to is not valid') unless @time_to.is_a?(Time)
 
-      known_arrays = args[:known_arrays] || []
-      known_arrays.concat [:item]
-      args[:known_arrays] = known_arrays
+      skip_type_casting = (args[:skip_type_casting] || []).concat(ItemDetails::SKIP_TYPE_CASTING)
+      args[:skip_type_casting] = skip_type_casting.uniq
+
+      known_arrays = (args[:known_arrays] || []).concat(ItemDetails::KNOWN_ARRAYS)
+      known_arrays.concat [:item] # as Containers always return 1 or more items
+      args[:known_arrays] = known_arrays.uniq
 
       super(CALL_NAME, auth_token, args) do
         case event_type

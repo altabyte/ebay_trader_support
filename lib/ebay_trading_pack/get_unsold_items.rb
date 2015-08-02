@@ -66,13 +66,12 @@ module EbayTradingPack
         @duration_in_days = 60 if @duration_in_days > 60
       end
 
-      skip_type_casting = args[:skip_type_casting] || []
-      skip_type_casting.concat [:sku, :postal_code]
-      args[:skip_type_casting] = skip_type_casting
+      skip_type_casting = (args[:skip_type_casting] || []).concat(ItemDetails::SKIP_TYPE_CASTING)
+      args[:skip_type_casting] = skip_type_casting.uniq
 
-      known_arrays = args[:known_arrays] || []
-      known_arrays.concat [:item, :shipping_service_options, :variation]
-      args[:known_arrays] = known_arrays
+      known_arrays = (args[:known_arrays] || []).concat(ItemDetails::KNOWN_ARRAYS)
+      known_arrays.concat [:item] # as Containers always return 1 or more items
+      args[:known_arrays] = known_arrays.uniq
 
       super(CALL_NAME, auth_token, args) do
         ErrorLanguage 'en_GB'

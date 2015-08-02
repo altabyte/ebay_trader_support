@@ -210,8 +210,10 @@ describe GetSellerList do
     puts "  Start Time: #{item.start_time.strftime('%-d %b %y - %H:%M').rjust(18)}"
     puts "  End Time:   #{item.end_time.strftime('%-d %b %y - %H:%M').rjust(18)}"
     expect(item).to be_active
-    expect(item.end_time).to be > DateTime.now
-    expect(item.start_time).to be < DateTime.now
+    expect(item.end_time).to be > Time.now.utc
+
+    # Do not check start time as this call will also return scheduled items!
+    # expect(item.start_time).to be < Time.now.utc
 
     expect(item.quantity_listed).to be >= 1
     expect(item.quantity_sold).to be >= 0

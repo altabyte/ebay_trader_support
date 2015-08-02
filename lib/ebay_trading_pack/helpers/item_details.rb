@@ -11,6 +11,12 @@ module EbayTradingPack
   # in the {https://github.com/altabyte/ebay_trading ebay-trading} gem.
   module ItemDetails
 
+    # @return [Array [Symbol]] an array of the +Symbol+ keys whose values are known to be arrays.
+    KNOWN_ARRAYS = [:picture_url, :shipping_service_options, :variation]
+
+    # @return [Array [Symbol]] an array of  the +Symbol+ keys whose values are not to be automatically type cast.
+    SKIP_TYPE_CASTING = [:sku, :postal_code]
+
     # Get the eBay item ID of this listing.
     # @return [Fixnum] eBay item ID.
     #

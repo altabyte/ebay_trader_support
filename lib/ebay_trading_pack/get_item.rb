@@ -19,9 +19,13 @@ module EbayTradingPack
       @item_id = item_id
       @include_description = ((args[:include_description] && args[:include_description] != false) || false).freeze
 
-      known_arrays = ['picture_url']
+      skip_type_casting = (args[:skip_type_casting] || []).concat(ItemDetails::SKIP_TYPE_CASTING)
+      args[:skip_type_casting] = skip_type_casting.uniq
 
-      super(CALL_NAME, auth_token, known_arrays: known_arrays) do
+      known_arrays = (args[:known_arrays] || []).concat(ItemDetails::KNOWN_ARRAYS)
+      args[:known_arrays] = known_arrays.uniq
+
+      super(CALL_NAME, auth_token, args) do
         ItemID item_id
         IncludeWatchCount 'true'
         IncludeItemSpecifics 'true'

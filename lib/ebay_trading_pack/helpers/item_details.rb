@@ -12,10 +12,38 @@ module EbayTradingPack
   module ItemDetails
 
     # @return [Array [Symbol]] an array of the +Symbol+ keys whose values are known to be arrays.
-    KNOWN_ARRAYS ||= [:picture_url, :shipping_service_options, :variation]
+    KNOWN_ARRAYS ||= [
+        :compatibility,
+        :copyright,
+        :cross_border_trade,
+        :discount_profile,
+        :ebay_picture_url,
+        :exclude_ship_to_location,
+        :external_picture_url,
+        :gift_services,
+        :international_shipping_service_option,
+        :listing_enhancement,
+        :name_value_list,
+        :payment_allowed_site,
+        :payment_methods,
+        :promoted_item,
+        :picture_url,
+        :shipping_service_options,
+        :ship_to_location,
+        :ship_to_locations,
+        :skype_contact_option,
+        :tax_jurisdiction,
+        :value,
+        :variation,
+        :variation_specific_picture_set,
+        :variation_specifics
+    ]
 
     # @return [Array [Symbol]] an array of  the +Symbol+ keys whose values are not to be automatically type cast.
-    SKIP_TYPE_CASTING ||= [:sku, :postal_code]
+    SKIP_TYPE_CASTING ||= [
+        :sku,
+        :postal_code
+    ]
 
     # Get the eBay item ID of this listing.
     # @return [Fixnum] eBay item ID.

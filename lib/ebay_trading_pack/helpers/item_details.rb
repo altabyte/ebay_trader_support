@@ -22,6 +22,7 @@ module EbayTradingPack
         :external_picture_url,
         :gift_services,
         :international_shipping_service_option,
+        :item_specifics,
         :listing_enhancement,
         :name_value_list,
         :payment_allowed_site,
@@ -36,7 +37,8 @@ module EbayTradingPack
         :value,
         :variation,
         :variation_specific_picture_set,
-        :variation_specifics
+        :variation_specifics,
+        :variation_specifics_set
     ]
 
     # @return [Array [Symbol]] an array of  the +Symbol+ keys whose values are not to be automatically type cast.
@@ -395,9 +397,12 @@ module EbayTradingPack
     #
     def item_specifics
       hash = {}
-      specifics = item_hash.deep_find([:item_specifics, :name_value_list], [])
+      return hash unless item_hash.key?(:item_specifics) && item_hash[:item_specifics].is_a?(Array)
+      name_value_list = item_hash[:item_specifics].first
+      return hash unless name_value_list.is_a?(Hash) && name_value_list.key?(:name_value_list)
+      specifics = name_value_list[:name_value_list]
       specifics = [specifics] unless specifics.is_a?(Array)
-      specifics.each { |details| hash[details[:name]] = details[:value] }
+      specifics.each { |details| hash[details[:name]] = !details[:value].empty? ? details[:value].first : '' }
       hash
     end
 

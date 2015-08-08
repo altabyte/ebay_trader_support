@@ -37,8 +37,8 @@ describe GetSellerList do
       it { is_expected.to be_success }
 
       it {
-        #puts "#{unsold.xml_request}\n\n"
-        #puts "#{unsold.to_s(2)}\n\n"
+        #puts "#{seller_list.xml_request}\n\n"
+        #puts "#{seller_list.to_s(2)}\n\n"
         puts "#{JSON.pretty_generate seller_list.response_hash[:item_array]}\n\n"
       }
 

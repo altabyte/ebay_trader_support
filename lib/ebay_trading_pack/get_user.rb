@@ -12,6 +12,30 @@ module EbayTradingPack
   class GetUser < Request
     CALL_NAME = 'GetUser'
 
+    KNOWN_ARRAYS = [
+        :charity_affiliation_detail,
+        :site,
+        :skype_id,
+        :supported_site,
+        :top_rated_program,
+        :user_subscription
+    ]
+
+    SKIP_TYPE_CASTING = [
+        :charity_id,
+        :city_name,
+        :international_street,
+        :phone,
+        :postal_code,
+        :name,
+        :skype_id,
+        :street,
+        :street1,
+        :street2,
+        :user_id,
+        :vat_id
+    ]
+
     # @return [String] the username of the eBay user whose details are being requested.
     attr_reader :user_id
 
@@ -34,6 +58,12 @@ module EbayTradingPack
       @user_id = args[:user_id] || nil
       @item_id = args[:item_id] || nil
       @item_id = @item_id.to_i unless @item_id.nil?
+
+      skip_type_casting = (args[:skip_type_casting] || []).concat(SKIP_TYPE_CASTING)
+      args[:skip_type_casting] = skip_type_casting.uniq
+
+      known_arrays = (args[:known_arrays] || []).concat(KNOWN_ARRAYS)
+      args[:known_arrays] = known_arrays.uniq
 
       super(CALL_NAME, auth_token, args) do
         UserID user_id unless user_id.nil?

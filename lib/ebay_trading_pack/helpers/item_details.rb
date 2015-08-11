@@ -50,9 +50,10 @@ module EbayTradingPack
     # Get the eBay item ID of this listing.
     # @return [Fixnum] eBay item ID.
     #
-    def ebay_item_id
+    def item_id
       item_hash.deep_find(:item_id)
     end
+    alias ebay_item_id item_id
 
     # Get the item SKU, which is called custom label in the UK.
     # @return [String] the item's SKU.

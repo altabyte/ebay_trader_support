@@ -4,5 +4,5 @@
 # For minor edits and fixes, bump the *.*.X number.
 
 module EbayTradingPack
-  VERSION = '1.7.1'
+  VERSION = '1.7.2'
 end

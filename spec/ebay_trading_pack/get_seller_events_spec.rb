@@ -1,3 +1,5 @@
+require 'spec_helper'
+
 require 'ebay_trading'
 require 'ebay_trading_pack/get_seller_events'
 
@@ -7,14 +9,7 @@ include EbayTradingPack
 describe GetSellerEvents do
 
   before :all do
-    EbayTrading.configure do |config|
-      config.environment  = :production
-      config.price_type   = :money
-      config.ebay_site_id = 3 # ebay.co.uk
-      config.dev_id  = ENV['EBAY_API_DEV_ID']
-      config.app_id  = ENV['EBAY_API_APP_ID']
-      config.cert_id = ENV['EBAY_API_CERT_ID']
-    end
+    configure_api_production
     @auth_token = ENV['EBAY_API_AUTH_TOKEN_TT']
   end
   let(:auth_token) { @auth_token }

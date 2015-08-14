@@ -1,3 +1,5 @@
+require 'spec_helper'
+
 require 'json'
 
 require 'ebay_trading'
@@ -10,20 +12,11 @@ describe GetItem do
 
   # Actually, configuration should not be necessary for local XML processing?
   before :all do
+    configure_api_production
     @auth_token = ENV['EBAY_API_AUTH_TOKEN_TT']
   end
   let(:auth_token) { @auth_token }
 
-  before :all do
-    EbayTrading.configure do |config|
-      config.environment  = :production
-      config.price_type   = :money
-      config.ebay_site_id = 3 # ebay.co.uk
-      config.dev_id  = ENV['EBAY_API_DEV_ID']
-      config.app_id  = ENV['EBAY_API_APP_ID']
-      config.cert_id = ENV['EBAY_API_CERT_ID']
-    end
-  end
 
   context 'when invalid item ID'  do
     let(:item_id) { 123 }

@@ -1,3 +1,5 @@
+require 'spec_helper'
+
 require 'ebay_trading'
 require 'ebay_trading_pack/get_categories'
 
@@ -8,19 +10,10 @@ describe GetCategories do
 
   # Actually, configuration should not be necessary for local XML processing?
   before :all do
+    configure_api_sandbox
     @auth_token = ENV['EBAY_API_AUTH_TOKEN_TEST_USER_1']
   end
   let(:auth_token) { @auth_token }
-
-  before do
-    EbayTrading.configure do |config|
-      config.environment = :sandbox
-      config.ebay_site_id = 3 # ebay.co.uk
-      config.dev_id  = ENV['EBAY_API_DEV_ID_SANDBOX']
-      config.app_id  = ENV['EBAY_API_APP_ID_SANDBOX']
-      config.cert_id = ENV['EBAY_API_CERT_ID_SANDBOX']
-    end
-  end
 
 
   context 'when no base category is blank or invalid' do

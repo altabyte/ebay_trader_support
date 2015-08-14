@@ -3,9 +3,13 @@
 #
 require 'ebay_trading'
 
+require 'redis'
+
 EbayTrading.configure do |config|
   config.environment = :production
   config.ebay_site_id = 3 # ebay.co.uk
+  config.ebay_api_version = 933
+
   config.dev_id  = ENV['EBAY_API_DEV_ID']
   config.app_id  = ENV['EBAY_API_APP_ID']
   config.cert_id = ENV['EBAY_API_CERT_ID']
@@ -15,6 +19,17 @@ EbayTrading.configure do |config|
 
   # Sandbox test user 1
   config.store_auth_token(ENV['EBAY_API_USERNAME_T1'], ENV['EBAY_API_AUTH_TOKEN_T1'])
+
+  # Log the call in a Redis DB counter variable.
+  config.counter = lambda {
+    begin
+      redis = Redis.new(host: 'localhost')
+      key = "ebay_trading:production:call_count:#{Time.now.utc.strftime('%Y-%m-%d')}"
+      redis.incr(key)
+    rescue SocketError
+      console 'Failed to increment Redis call counter!', :red
+    end
+  }
 end
 
 require 'optparse' # OptionParser is a class for command-line option analysis

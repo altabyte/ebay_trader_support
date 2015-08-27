@@ -28,6 +28,8 @@ def configure_api_environment(env)
 
     config.price_type       = :money
 
+    config.ssl_verify       = false
+
     config.dev_id  = ENV['EBAY_API_DEV_ID']
     config.app_id  = ENV['EBAY_API_APP_ID']
     config.cert_id = ENV['EBAY_API_CERT_ID']

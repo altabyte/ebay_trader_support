@@ -11,11 +11,11 @@ module EbayTradingPack
 
     attr_reader :category_number
 
-    def initialize(auth_token, category_number, args = {})
+    def initialize(category_number, args = {})
       category_number = category_number.to_i
       raise RequestError, 'Please provide a valid root category number' unless category_number > 0
 
-      super(CALL_NAME, auth_token, args) do
+      super(CALL_NAME, args) do
         CategorySpecific do
           CategoryID category_number
         end

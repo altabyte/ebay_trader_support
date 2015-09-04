@@ -12,12 +12,13 @@ class CategorySpecifics
     parse_args options
 
     category_number = ARGV.first
+    raise 'Please provide a category number' if category_number.blank?
 
     # GetCategorySpecifics is not specific to a particular eBay user,
     # so any valid Authentication Token can be used.
     auth_token = generic_auth_token
 
-    specifics = GetCategorySpecifics.new(auth_token, category_number, ebay_site_id: options.ebay_site_id)
+    specifics = GetCategorySpecifics.new(category_number, auth_token: auth_token, ebay_site_id: options.ebay_site_id)
     if specifics.has_errors?
       specifics.errors.each do |error|
         console error[:short_message], :red

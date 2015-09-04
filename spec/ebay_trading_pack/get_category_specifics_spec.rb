@@ -31,7 +31,7 @@ describe GetCategorySpecifics do
     it 'retrieves data' do
       category_ids.each_pair do |category_id, path|
         puts "#{category_id}: #{path}"
-        category_specifics = GetCategorySpecifics.new(auth_token, category_id)
+        category_specifics = GetCategorySpecifics.new(category_id)
         expect(category_specifics).to be_success
         expect(category_specifics).not_to have_errors
         expect(category_specifics).not_to have_warnings

@@ -46,6 +46,8 @@ module EbayTradingPack
     #
     # @param args [Hash] a hash of optional configuration values.
     #
+    # @option args [String] :auth_token override the auth_token value in {Configuration#auth_token}.
+    #
     # @option args [String] :seller_id the eBay user ID of the seller. If omitted the seller ID will be the owner of the +auth_token+.
     #
     # @option args [Fixnum] :per_page number of items per page. Can be 25, 50, 100 or 200.
@@ -58,7 +60,7 @@ module EbayTradingPack
     #
     # @option args [Symbol] :sort can be :descending (default for +:end_time+) or :ascending (default for +:start_time+).
     #
-    def initialize(auth_token, page_number, args = {})
+    def initialize(page_number, args = {})
 
       page_number = page_number.to_i
       page_number = 1 if page_number < 1
@@ -127,7 +129,7 @@ module EbayTradingPack
       known_arrays.concat [:item] # as Containers always return 1 or more items
       args[:known_arrays] = known_arrays.uniq
 
-      super(CALL_NAME, auth_token, args) do
+      super(CALL_NAME, args) do
         ErrorLanguage 'en_GB'
         WarningLevel 'High'
 

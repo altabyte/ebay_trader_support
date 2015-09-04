@@ -28,6 +28,7 @@ class SellerList
     raise "eBay username '#{username}' is not valid" if auth_token.nil?
 
     args = {
+        auth_token: auth_token,
         per_page: PER_PAGE,
         seller_id: options.seller_id,
         http_timeout: 90
@@ -41,7 +42,7 @@ class SellerList
       message << " of #{number_of_pages}" if number_of_pages
       console message, "\r"
 
-      seller_list = GetSellerList.new(auth_token, page_number, args)
+      seller_list = GetSellerList.new(page_number, args)
       raise seller_list.errors.first[:short_message] if seller_list.has_errors?
       @items.concat seller_list.items
 

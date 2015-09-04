@@ -10,9 +10,7 @@ describe GetSellerList do
 
   before :all do
     configure_api_production
-    @auth_token = ENV['EBAY_API_AUTH_TOKEN_TT']
   end
-  let(:auth_token) { @auth_token }
 
   context 'When auth_token belongs to the seller' do
 
@@ -20,7 +18,7 @@ describe GetSellerList do
       before :all do
         @page_number = 1
         @per_page    = 1
-        @seller_list = GetSellerList.new(@auth_token, @page_number, per_page: @per_page)
+        @seller_list = GetSellerList.new(@page_number, per_page: @per_page)
       end
 
       let(:page_number) { @page_number }
@@ -67,7 +65,7 @@ describe GetSellerList do
       before :all do
         @page_number = 1
         @per_page = 2
-        @seller_list = GetSellerList.new(@auth_token, @page_number, per_page: @per_page)
+        @seller_list = GetSellerList.new(@page_number, per_page: @per_page)
       end
 
       let(:page_number) { @page_number }
@@ -143,7 +141,7 @@ describe GetSellerList do
       @seller_id = 'currys_pcworld'
       @page_number = 1
       @per_page    = 10
-      @seller_list = GetSellerList.new(@auth_token, @page_number, seller_id: @seller_id, per_page: @per_page)
+      @seller_list = GetSellerList.new(@page_number, seller_id: @seller_id, per_page: @per_page)
     end
 
     let(:seller_id)   { @seller_id }

@@ -11,9 +11,9 @@ describe GetCategories do
   # Actually, configuration should not be necessary for local XML processing?
   before :all do
     configure_api_sandbox
-    @auth_token = ENV['EBAY_API_AUTH_TOKEN_TEST_USER_1']
+    #@auth_token = ENV['EBAY_API_AUTH_TOKEN_TEST_USER_1']
   end
-  let(:auth_token) { @auth_token }
+  #let(:auth_token) { @auth_token }
 
 
   context 'when no base category is blank or invalid' do
@@ -21,7 +21,7 @@ describe GetCategories do
     it 'should output eBay root categories if category_number.to is zero' do
       root_categories = ''
       [nil, 'INVALID', 0].each do |category_number|
-        categories = GetCategories.new(auth_token, category_number)
+        categories = GetCategories.new(category_number)
         expect(categories).not_to be nil
         expect(categories).to be_success
         expect(categories).not_to have_warnings
@@ -37,7 +37,7 @@ describe GetCategories do
     it 'should raise an error for to_s if category is an unrecognized positive integer' do
       begin
         invalid_category = 5_000_000_000
-        categories = GetCategories.new(auth_token, invalid_category)
+        categories = GetCategories.new(invalid_category)
         expect(categories).not_to be nil
         expect(categories).not_to be_success
         expect(categories).not_to have_warnings
@@ -59,7 +59,7 @@ describe GetCategories do
 
     it 'should output a tree of sub-categories for UK Jewellery' do
       jewellery_category_uk = 281
-      categories = GetCategories.new(auth_token, jewellery_category_uk)
+      categories = GetCategories.new(jewellery_category_uk)
       expect(categories).not_to be nil
 
       expect(categories).to be_success
@@ -87,7 +87,7 @@ describe GetCategories do
     it 'should produce different sub-categories for UK and USA sites' do
       puts 'Getting jewellery sub-category for UK site...'
       jewellery_category_uk = 281
-      uk = GetCategories.new(auth_token, jewellery_category_uk, ebay_site_id: 3)
+      uk = GetCategories.new(jewellery_category_uk, ebay_site_id: 3)
       expect(uk).not_to be nil
       expect(uk).to be_success
       expect(uk).not_to have_warnings
@@ -97,7 +97,7 @@ describe GetCategories do
 
       puts 'Getting jewellery sub-categories for USA site...'
       jewellery_category_usa = jewellery_category_uk   # UK and USA have same jewellery/jewelry category IDs
-      usa = GetCategories.new(auth_token, jewellery_category_usa, ebay_site_id: 0)
+      usa = GetCategories.new(jewellery_category_usa, ebay_site_id: 0)
       expect(usa).not_to be nil
       expect(usa).to be_success
       expect(usa).not_to have_warnings
@@ -114,7 +114,7 @@ describe GetCategories do
     # Crafts -> Beads -> Gemstone -> Amethyst
     it 'should display only information about the current category if it is a leaf' do
       crafts_beads = 34091
-      categories = GetCategories.new auth_token, crafts_beads
+      categories = GetCategories.new crafts_beads
       expect(categories).to be_success
       expect(categories).not_to have_errors
       expect(categories).not_to have_warnings

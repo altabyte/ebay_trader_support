@@ -20,7 +20,7 @@ def configure_api_environment(env)
 
   EbayTrading.configure do |config|
 
-    config.ebay_api_version = 933
+    config.ebay_api_version = 935
 
     config.environment      = env
 
@@ -30,9 +30,11 @@ def configure_api_environment(env)
 
     config.ssl_verify       = false
 
-    config.dev_id  = ENV['EBAY_API_DEV_ID']
-    config.app_id  = ENV['EBAY_API_APP_ID']
-    config.cert_id = ENV['EBAY_API_CERT_ID']
+    config.dev_id  = (env == :production) ? ENV['EBAY_API_DEV_ID']  : ENV['EBAY_API_DEV_ID_SANDBOX']
+    config.app_id  = (env == :production) ? ENV['EBAY_API_APP_ID']  : ENV['EBAY_API_APP_ID_SANDBOX']
+    config.cert_id = (env == :production) ? ENV['EBAY_API_CERT_ID'] : ENV['EBAY_API_CERT_ID_SANDBOX']
+
+    config.auth_token = (env == :production) ? ENV['EBAY_API_AUTH_TOKEN_TT'] : ENV['EBAY_API_AUTH_TOKEN_TEST_USER_1']
 
     config.counter = lambda {
       begin

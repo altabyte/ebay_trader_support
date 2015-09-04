@@ -12,7 +12,7 @@ module EbayTradingPack
     attr_reader :root_category_number
     attr_reader :level_limit
 
-    def initialize(auth_token, root_category_number, args = {})
+    def initialize(root_category_number, args = {})
       unless root_category_number.nil?
         root_category_number = root_category_number.to_i
         root_category_number = nil unless root_category_number > 0
@@ -22,14 +22,14 @@ module EbayTradingPack
       @level_limit = (args[:level_limit] || 5).to_i
       @level_limit = 1 if @root_category_number.nil?
 
-      ebay_site_id = (args[:ebay_site_id] || EbayTrading.configuration.ebay_site_id).to_i
+      args[:ebay_site_id] = EbayTrading.configuration.ebay_site_id unless args.key?(:ebay_site_id)
 
-      super(CALL_NAME, auth_token, ebay_site_id: ebay_site_id, xml_tab_width: 2) do
-        CategorySiteID ebay_site_id
+      super(CALL_NAME, args) do
+        CategorySiteID args[:ebay_site_id]
         CategoryParent root_category_number unless root_category_number.nil?
         DetailLevel 'ReturnAll'
         LevelLimit level_limit
-        ViewAllNodes 'true'
+        ViewAllNodes true
       end
     end
 

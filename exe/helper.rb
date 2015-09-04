@@ -8,18 +8,18 @@ require 'redis'
 EbayTrading.configure do |config|
   config.environment = :production
   config.ebay_site_id = 3 # ebay.co.uk
-  config.ebay_api_version = 933
+  config.ebay_api_version = 935
   config.ssl_verify = false
 
   config.dev_id  = ENV['EBAY_API_DEV_ID']
   config.app_id  = ENV['EBAY_API_APP_ID']
   config.cert_id = ENV['EBAY_API_CERT_ID']
 
-  config.store_auth_token(ENV['EBAY_API_USERNAME_AR'], ENV['EBAY_API_AUTH_TOKEN_AR'])
-  config.store_auth_token(ENV['EBAY_API_USERNAME_TT'], ENV['EBAY_API_AUTH_TOKEN_TT'])
+  config.map_auth_token(ENV['EBAY_API_USERNAME_AR'], ENV['EBAY_API_AUTH_TOKEN_AR'])
+  config.map_auth_token(ENV['EBAY_API_USERNAME_TT'], ENV['EBAY_API_AUTH_TOKEN_TT'])
 
   # Sandbox test user 1
-  config.store_auth_token(ENV['EBAY_API_USERNAME_T1'], ENV['EBAY_API_AUTH_TOKEN_T1'])
+  config.map_auth_token(ENV['EBAY_API_USERNAME_T1'], ENV['EBAY_API_AUTH_TOKEN_T1'])
 
   # Log the call in a Redis DB counter variable.
   config.counter = lambda {

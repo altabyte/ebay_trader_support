@@ -14,7 +14,7 @@ module EbayTradingPack
 
     attr_reader :item_id
 
-    def initialize(auth_token, item_id, args = {})
+    def initialize(item_id, args = {})
       item_id = item_id.to_i.freeze
       @item_id = item_id
       @include_description = ((args[:include_description] && args[:include_description] != false) || false).freeze
@@ -25,7 +25,7 @@ module EbayTradingPack
       known_arrays = (args[:known_arrays] || []).concat(ItemDetails::KNOWN_ARRAYS)
       args[:known_arrays] = known_arrays.uniq
 
-      super(CALL_NAME, auth_token, args) do
+      super(CALL_NAME, args) do
         ItemID item_id
         IncludeWatchCount 'true'
         IncludeItemSpecifics 'true'
@@ -40,6 +40,5 @@ module EbayTradingPack
     def item_hash
       response_hash[:item] || {}
     end
-
   end
 end

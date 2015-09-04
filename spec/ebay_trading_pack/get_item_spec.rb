@@ -13,14 +13,12 @@ describe GetItem do
   # Actually, configuration should not be necessary for local XML processing?
   before :all do
     configure_api_production
-    @auth_token = ENV['EBAY_API_AUTH_TOKEN_TT']
   end
-  let(:auth_token) { @auth_token }
 
 
   context 'when invalid item ID'  do
     let(:item_id) { 123 }
-    subject(:item) { GetItem.new(auth_token, item_id) }
+    subject(:item) { GetItem.new(item_id) }
 
     it 'should return an empty hash' do
       is_expected.not_to be_nil
@@ -41,7 +39,7 @@ describe GetItem do
 
     before :all do
       @ebay_item_id = 371162058886
-      @item = GetItem.new(@auth_token, @ebay_item_id)
+      @item = GetItem.new(@ebay_item_id)
     end
 
     subject(:item) { @item }
@@ -164,7 +162,5 @@ describe GetItem do
         puts "\n\n#{item.summary(true)}\n\n"
       end
     end
-
   end
 end
-

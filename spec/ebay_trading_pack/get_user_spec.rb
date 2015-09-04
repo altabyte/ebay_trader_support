@@ -12,14 +12,12 @@ describe GetUser do
 
   before :all do
     configure_api_production
-    @auth_token = ENV['EBAY_API_AUTH_TOKEN_TT']
   end
-  let(:auth_token) { @auth_token }
 
 
   context 'Without specifying user_id in the args' do
     before :all do
-      @get_user = GetUser.new(@auth_token)
+      @get_user = GetUser.new()
     end
 
     subject(:user) { @get_user }
@@ -35,7 +33,7 @@ describe GetUser do
 
   context 'When a valid eBay user ID is provided' do
     before :all do
-      @get_user = GetUser.new(@auth_token, user_id: ENV['EBAY_API_USERNAME_AR'])
+      @get_user = GetUser.new(user_id: ENV['EBAY_API_USERNAME_AR'], auth_token: ENV['EBAY_API_AUTH_TOKEN_TT'])
     end
 
     subject(:user) { @get_user }
@@ -52,7 +50,7 @@ describe GetUser do
   context 'When the given eBay user ID does not exist' do
     before :all do
       @random_user_id = "#{SecureRandom.uuid.to_s}-#{SecureRandom.uuid.to_s}"
-      @get_user = GetUser.new(@auth_token, user_id: @random_user_id)
+      @get_user = GetUser.new(user_id: @random_user_id)
     end
 
     subject(:user) { @get_user }

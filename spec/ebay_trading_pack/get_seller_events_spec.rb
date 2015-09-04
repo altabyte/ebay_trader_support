@@ -10,9 +10,7 @@ describe GetSellerEvents do
 
   before :all do
     configure_api_production
-    @auth_token = ENV['EBAY_API_AUTH_TOKEN_TT']
   end
-  let(:auth_token) { @auth_token }
 
   context 'when listings ended in the last 24 hours' do
 
@@ -22,7 +20,7 @@ describe GetSellerEvents do
       @event_type = :ended
 
       puts "\nGetting seller events for listings '#{@event_type.to_s}' between #{@time_from} and #{@time_to}\n\n"
-      @events = GetSellerEvents.new(@auth_token, @event_type, @time_from, @time_to, xml_tab_width: 2)
+      @events = GetSellerEvents.new(@event_type, @time_from, @time_to, xml_tab_width: 2)
     end
 
     subject(:events) { @events }

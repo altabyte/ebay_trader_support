@@ -33,12 +33,11 @@ module EbayTradingPack
 
     # Get the seller events for listings that were either *started*, *ended* or *modified*
     # within the specified time range.
-    # @param auth_token [String] the eBay Auth Token for the user submitting this request.
     # @param [Symbol] event_type +:modified+, +:started+ or +:ended+
     # @param [Time] time_from the earliest Time of interest.
     # @param [Time] time_to the latest Time of interest.
     #
-    def initialize(auth_token, event_type, time_from, time_to, args = {})
+    def initialize(event_type, time_from, time_to, args = {})
       @event_type = event_type
       raise RequestError.new("Event type '#{event_type}' is not valid") unless [:modified, :started, :ended].include?(event_type)
       @time_from = time_from.utc
@@ -53,7 +52,7 @@ module EbayTradingPack
       known_arrays.concat [:item] # as Containers always return 1 or more items
       args[:known_arrays] = known_arrays.uniq
 
-      super(CALL_NAME, auth_token, args) do
+      super(CALL_NAME, args) do
         case event_type
           when :modified
             ModTimeFrom   time_from.iso8601(3)

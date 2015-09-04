@@ -10,17 +10,14 @@ describe GetUnsoldItems do
 
   before :all do
     configure_api_production
-    @auth_token = ENV['EBAY_API_AUTH_TOKEN_TT']
   end
-  let(:auth_token) { @auth_token }
 
   describe 'requesting 1st page of unsold items' do
     before :all do
       @page_number      = 1
       @per_page         = 5
       @duration_in_days = 60
-      @unsold = GetUnsoldItems.new(@auth_token,
-                                   @page_number,
+      @unsold = GetUnsoldItems.new(@page_number,
                                    per_page: @per_page,
                                    duration_in_days: @duration_in_days)
     end

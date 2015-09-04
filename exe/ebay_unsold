@@ -28,7 +28,7 @@ class Unsold
 
     time = Time.now
     begin
-      unsold = GetUnsoldItems.new(auth_token, page_number += 1, per_page: PER_PAGE)
+      unsold = GetUnsoldItems.new(page_number += 1, per_page: PER_PAGE, auth_token: auth_token)
       raise unsold.errors.first[:short_message] if unsold.has_errors?
       items.concat unsold.items
     end while unsold.has_more_items?

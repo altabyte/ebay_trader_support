@@ -45,7 +45,7 @@ module EbayTradingPack
     # @return [Fixnum] the number of unsold items.
     alias_method :total_number_unsold, :total_number_of_entries
 
-    def initialize(auth_token, page_number, args = {})
+    def initialize(page_number, args = {})
       @page_number = page_number.to_i
       @page_number = 1 if page_number < 1
       @per_page = PER_PAGE_DEFAULT
@@ -73,7 +73,7 @@ module EbayTradingPack
       known_arrays.concat [:item] # as Containers always return 1 or more items
       args[:known_arrays] = known_arrays.uniq
 
-      super(CALL_NAME, auth_token, args) do
+      super(CALL_NAME, args) do
         ErrorLanguage 'en_GB'
         WarningLevel 'High'
         DetailLevel 'ReturnAll'

@@ -18,7 +18,7 @@ private
 def configure_api_environment(env)
   raise 'Environment must be either :production or :sandbox' unless [:production, :sandbox].include?(env)
 
-  EbayTrading.configure do |config|
+  EbayTrader.configure do |config|
 
     config.ebay_api_version = 935
 

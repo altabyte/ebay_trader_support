@@ -1,7 +1,7 @@
-require 'ebay_trading'
-require 'ebay_trading/request'
+require 'ebay_trader'
+require 'ebay_trader/request'
 
-include EbayTrading
+include EbayTrader
 
 module EbayTradingPack
 
@@ -22,7 +22,7 @@ module EbayTradingPack
       @level_limit = (args[:level_limit] || 5).to_i
       @level_limit = 1 if @root_category_number.nil?
 
-      args[:ebay_site_id] = EbayTrading.configuration.ebay_site_id unless args.key?(:ebay_site_id)
+      args[:ebay_site_id] = EbayTrader.configuration.ebay_site_id unless args.key?(:ebay_site_id)
 
       super(CALL_NAME, args) do
         CategorySiteID args[:ebay_site_id]

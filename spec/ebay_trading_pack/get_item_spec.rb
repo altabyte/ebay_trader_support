@@ -2,10 +2,10 @@ require 'spec_helper'
 
 require 'json'
 
-require 'ebay_trading'
+require 'ebay_trader'
 require 'ebay_trading_pack/get_item'
 
-include EbayTrading
+include EbayTrader
 include EbayTradingPack
 
 describe GetItem do

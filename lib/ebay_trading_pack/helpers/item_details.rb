@@ -1,4 +1,4 @@
-require 'ebay_trading'
+require 'ebay_trader'
 
 module EbayTradingPack
 

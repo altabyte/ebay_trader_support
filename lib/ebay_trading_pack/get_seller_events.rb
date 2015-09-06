@@ -1,12 +1,12 @@
 require 'active_support/time'
 
-require 'ebay_trading'
-require 'ebay_trading/request'
+require 'ebay_trader'
+require 'ebay_trader/request'
 
 require_relative 'helpers/item_details'
 require_relative 'helpers/pagination'
 
-include EbayTrading
+include EbayTrader
 
 module EbayTradingPack
   class GetSellerEvents < Request

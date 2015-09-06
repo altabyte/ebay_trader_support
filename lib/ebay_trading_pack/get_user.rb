@@ -1,7 +1,7 @@
-require 'ebay_trading'
-require 'ebay_trading/request'
+require 'ebay_trader'
+require 'ebay_trader/request'
 
-include EbayTrading
+include EbayTrader
 
 module EbayTradingPack
 

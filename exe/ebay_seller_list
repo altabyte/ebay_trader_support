@@ -6,8 +6,8 @@ require 'json'
 require_relative './helper'
 include ExecutableHelper
 
-require_relative '../lib/ebay_trading_pack/get_seller_list'
-include EbayTradingPack
+require_relative '../lib/ebay_trader_support/get_seller_list'
+include EbayTraderSupport
 
 class SellerList
 
@@ -24,7 +24,7 @@ class SellerList
     @items = []
 
     username = options.username
-    auth_token = EbayTrading.configuration.auth_token_for(username)
+    auth_token = EbayTrader.configuration.auth_token_for(username)
     raise "eBay username '#{username}' is not valid" if auth_token.nil?
 
     args = {
@@ -43,7 +43,7 @@ class SellerList
       console message, "\r"
 
       seller_list = GetSellerList.new(page_number, args)
-      raise seller_list.errors.first[:short_message] if seller_list.has_errors?
+      raise seller_list.errors.first.short_message if seller_list.has_errors?
       @items.concat seller_list.items
 
       @number_of_pages = seller_list.total_number_of_pages

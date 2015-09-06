@@ -6,7 +6,7 @@ require_relative 'helpers/pagination'
 
 include EbayTrader
 
-module EbayTradingPack
+module EbayTraderSupport
 
   # Helper class to get an eBay user's list of unsold items.
   # @see http://developer.ebay.com/DevZone/XML/docs/Reference/eBay/GetMyeBaySelling.html
@@ -115,7 +115,7 @@ module EbayTradingPack
     # Override the method definition in the included {Pagination} module
     # as +GetMyeBaySelling+ calls require pagination per container.
     # @return [Array[String|Symbol]] a list of element names pointing to the pagination information.
-    # @see EbayTradingPack::Pagination#pagination_path
+    # @see EbayTraderSupport::Pagination#pagination_path
     def pagination_path
       [:unsold_list, :pagination_result]
     end

@@ -3,8 +3,8 @@
 require_relative './helper'
 include ExecutableHelper
 
-require 'ebay_trading'
-require 'ebay_trading/request'
+require 'ebay_trader'
+require 'ebay_trader/request'
 
 begin
 
@@ -13,15 +13,15 @@ begin
   auth_token = generic_auth_token
 
   # Execute the request...
-  request = EbayTrading::Request.new('GeteBayOfficialTime', auth_token)
+  request = EbayTrader::Request.new('GeteBayOfficialTime', auth_token: auth_token)
 
   if request.success?
     console "Official eBay time is:  #{request.timestamp.to_s('%H:%M:%S GMT on %A %d %B %Y')}"
   else
     if request.has_errors?
       request.errors.each do |error|
-        console error[:short_message], :red
-        console error[:long_message], :red
+        console error.short_message, :red
+        console error.long_message, :red
       end
     else
       console 'Unknown error', :red

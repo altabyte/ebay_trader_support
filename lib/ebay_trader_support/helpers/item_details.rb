@@ -1,6 +1,6 @@
 require 'ebay_trader'
 
-module EbayTradingPack
+module EbayTraderSupport
 
   # A collection of helper methods to extract details from a single item hash.
   # Classes wishing to include this module must expose the original eBay API
@@ -8,7 +8,7 @@ module EbayTradingPack
   #
   # Note: Methods in this module make extensive use of the +deep_find+ method.
   # This has been mixed into the +HashWithIndifferentAccess+ class defined
-  # in the {https://github.com/altabyte/ebay_trading ebay-trading} gem.
+  # in the {https://github.com/altabyte/ebay_trader ebay-trader} gem.
   module ItemDetails
 
     # @return [Array [Symbol]] an array of the +Symbol+ keys whose values are known to be arrays.
@@ -146,7 +146,7 @@ module EbayTradingPack
         when 'Completed' then :completed
         when 'Ended'     then :ended
         else
-          raise EbayTradingError.new('Invalid item status')
+          raise EbayTraderError.new('Invalid item status')
       end
     end
 

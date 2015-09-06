@@ -3,10 +3,10 @@ require 'spec_helper'
 require 'securerandom'
 
 require 'ebay_trader'
-require 'ebay_trading_pack/get_user'
+require 'ebay_trader_support/get_user'
 
 include EbayTrader
-include EbayTradingPack
+include EbayTraderSupport
 
 describe GetUser do
 

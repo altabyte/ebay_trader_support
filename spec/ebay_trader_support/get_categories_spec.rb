@@ -1,10 +1,10 @@
 require 'spec_helper'
 
 require 'ebay_trader'
-require 'ebay_trading_pack/get_categories'
+require 'ebay_trader_support/get_categories'
 
 include EbayTrader
-include EbayTradingPack
+include EbayTraderSupport
 
 describe GetCategories do
 

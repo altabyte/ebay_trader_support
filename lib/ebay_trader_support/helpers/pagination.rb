@@ -1,4 +1,4 @@
-module EbayTradingPack
+module EbayTraderSupport
   module Pagination
 
     def page_number

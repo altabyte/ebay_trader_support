@@ -3,7 +3,7 @@ require 'ebay_trader/request'
 
 include EbayTrader
 
-module EbayTradingPack
+module EbayTraderSupport
 
   class GetCategories < Request
 
@@ -37,7 +37,7 @@ module EbayTradingPack
     # If full is true it will render the entire response hash in YAML format.
     #
     def to_s(full = false)
-      raise EbayTradingError, errors.first[:long_message] unless success?
+      raise EbayTraderError, errors.first[:long_message] unless success?
       if full
         puts response_hash.to_yaml
       else

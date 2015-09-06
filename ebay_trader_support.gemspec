@@ -1,17 +1,17 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'ebay_trading_pack/version'
+require 'ebay_trader_support/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'ebay-trading-pack'
-  spec.version       = EbayTradingPack::VERSION
+  spec.name          = 'ebay-trader-support'
+  spec.version       = EbayTraderSupport::VERSION
   spec.authors       = ['Rob Graham']
   spec.email         = ['altabyte@gmail.com']
 
-  spec.summary       = %q{A suite of tools for accessing eBay's Trading API}
+  spec.summary       = %q{A suite of classes and CLI examples using eBay Trading API with the ebay-trader gem.}
   spec.description   = <<-DESC
-    A suite of tools for accessing eBay's Trading API.
+    A suite of classes and CLI examples using eBay Trading API with the ebay-trader gem.
   DESC
   spec.homepage      = 'http://www.altabyte.com'
   spec.license       = 'MIT'

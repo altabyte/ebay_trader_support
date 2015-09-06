@@ -3,7 +3,7 @@ require 'ebay_trader/request'
 
 include EbayTrader
 
-module EbayTradingPack
+module EbayTraderSupport
 
   # Get the details for an eBay user.
   #
@@ -48,7 +48,7 @@ module EbayTradingPack
     #
     # @param args [Hash] a hash of optional settings.
     #
-    # @param args [String] :auth_token override the auth_token value in {Configuration#auth_token}.
+    # @option args [String] :auth_token override the auth_token value in +Configuration#auth_token+.
     #
     # @option args [String] :user_id the eBay username of the user.
     #

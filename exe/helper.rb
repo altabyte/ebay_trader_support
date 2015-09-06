@@ -1,11 +1,11 @@
 #
 # Helpers mix-ins for executable files found in /exe
 #
-require 'ebay_trading'
+require 'ebay_trader'
 
 require 'redis'
 
-EbayTrading.configure do |config|
+EbayTrader.configure do |config|
   config.environment = :production
   config.ebay_site_id = 3 # ebay.co.uk
   config.ebay_api_version = 935
@@ -68,7 +68,7 @@ module ExecutableHelper
   #
   def generic_auth_token
     username = ENV['EBAY_API_USERNAME_TT']
-    EbayTrading.configuration.auth_token_for(username)
+    EbayTrader.configuration.auth_token_for(username)
   end
 
   #

@@ -1,10 +1,10 @@
 require 'spec_helper'
 
 require 'ebay_trader'
-require 'ebay_trading_pack/get_unsold_items'
+require 'ebay_trader_support/get_unsold_items'
 
 include EbayTrader
-include EbayTradingPack
+include EbayTraderSupport
 
 describe GetUnsoldItems do
 

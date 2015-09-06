@@ -5,8 +5,8 @@ require 'active_support/time'
 require_relative './helper'
 include ExecutableHelper
 
-require_relative '../lib/ebay_trading_pack/get_unsold_items'
-include EbayTradingPack
+require_relative '../lib/ebay_trader_support/get_unsold_items'
+include EbayTraderSupport
 
 class Unsold
 
@@ -23,13 +23,13 @@ class Unsold
     items = []
 
     username = options.username
-    auth_token = EbayTrading.configuration.auth_token_for(username)
+    auth_token = EbayTrader.configuration.auth_token_for(username)
     raise "eBay username '#{username}' is not valid" if auth_token.nil?
 
     time = Time.now
     begin
       unsold = GetUnsoldItems.new(page_number += 1, per_page: PER_PAGE, auth_token: auth_token)
-      raise unsold.errors.first[:short_message] if unsold.has_errors?
+      raise unsold.errors.first.short_message if unsold.has_errors?
       items.concat unsold.items
     end while unsold.has_more_items?
     @run_time_in_seconds = Time.now - time

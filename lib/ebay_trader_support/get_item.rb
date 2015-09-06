@@ -5,7 +5,7 @@ require_relative 'helpers/item_details'
 
 include EbayTrader
 
-module EbayTradingPack
+module EbayTraderSupport
 
   class GetItem < Request
     include ItemDetails

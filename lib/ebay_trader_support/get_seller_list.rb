@@ -8,9 +8,8 @@ require_relative 'helpers/pagination'
 
 include EbayTrader
 
-module EbayTradingPack
+module EbayTraderSupport
 
-  #
   # Get a list of the seller's items.
   # By default the list is based upon item :end_time as this will ensure that
   # all items are accessible. GTC items have a virtual end time.
@@ -40,13 +39,11 @@ module EbayTradingPack
 
     # Get a list of items for sale from a seller.
     #
-    # @param auth_token [String] the eBay Auth Token for the user submitting this request.
-    #
     # @param page_number [Fixnum] the page number requested.
     #
     # @param args [Hash] a hash of optional configuration values.
     #
-    # @option args [String] :auth_token override the auth_token value in {Configuration#auth_token}.
+    # @option args [String] :auth_token override the auth_token value in +Configuration#auth_token+.
     #
     # @option args [String] :seller_id the eBay user ID of the seller. If omitted the seller ID will be the owner of the +auth_token+.
     #

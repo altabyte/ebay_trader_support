@@ -3,7 +3,7 @@ require 'ebay_trader/request'
 
 include EbayTrader
 
-module EbayTradingPack
+module EbayTraderSupport
 
   class GetCategorySpecifics < Request
 

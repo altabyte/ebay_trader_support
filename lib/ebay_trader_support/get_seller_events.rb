@@ -8,7 +8,7 @@ require_relative 'helpers/pagination'
 
 include EbayTrader
 
-module EbayTradingPack
+module EbayTraderSupport
   class GetSellerEvents < Request
     include Pagination, Enumerable
 

@@ -1,10 +1,10 @@
 require 'spec_helper'
 
 require 'ebay_trader'
-require 'ebay_trading_pack/get_seller_list'
+require 'ebay_trader_support/get_seller_list'
 
 include EbayTrader
-include EbayTradingPack
+include EbayTraderSupport
 
 describe GetSellerList do
 

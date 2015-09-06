@@ -1,5 +1,5 @@
-require 'ebay_trading_pack/version'
+require 'ebay_trader_support/version'
 
-module EbayTradingPack
-  class EbayTradingError < RuntimeError; end
+module EbayTraderSupport
+  class EbayTraderError < RuntimeError; end
 end

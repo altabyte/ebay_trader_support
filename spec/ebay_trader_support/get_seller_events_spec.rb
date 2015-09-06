@@ -1,10 +1,10 @@
 require 'spec_helper'
 
 require 'ebay_trader'
-require 'ebay_trading_pack/get_seller_events'
+require 'ebay_trader_support/get_seller_events'
 
 include EbayTrader
-include EbayTradingPack
+include EbayTraderSupport
 
 describe GetSellerEvents do
 

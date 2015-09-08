@@ -1,15 +1,85 @@
 # EbayTraderSupport
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/ebay_trader_support`. To experiment with that code, run `bin/console` for an interactive prompt.
+**EbayTraderSupport** extends the [ebay-trader](https://github.com/altabyte/ebay_trader) gem to offer a suite of classes 
+and command line tools for interacting with the [eBay's Trading API](http://developer.ebay.com/DevZone/XML/docs/Reference/eBay/index.html).
 
-TODO: Delete this and the text above, and describe your gem
+## Caution
+
+This gem is specific to my own business needs and may not be of direct use to your own circumstances. Please consider this 
+package as a list of use case scenarios and feel free to copy any features or functionality into your own projects.
+
+I will be adding additional functionality as and when I require it  :-)
+
+## Command line tools
+
+Get the UTC **time** from eBay. This tool serves as a pinger to check availability of the API service.
+
+    $ ebay_time
+
+Display a neatly formatted tree of sub-**categories** for a given parent ID. 
+If no parent ID is supplied a list of root categories will be displayed.
+
+```
+$ ebay_categories 
+    Usage: ebay_categories [options] category_ID
+        -a, --all                        Show all root categories.
+        -z, --ebay-site-id integer       ID number of the eBay site hosting the categories.
+        -h, -?, --help                   Display this screen.
+```
+
+Get a list of the **category specifics** for a particular category.
+
+```
+$ ebay_category_specifics 
+    Usage: ebay_category_specifics [options] category_ID
+        -z, --ebay-site-id integer       ID number of the eBay site hosting the categories.
+        -h, -?, --help                   Display this screen.
+```
+
+Get a CSV or JSON list of active items by a seller.
+
+```
+$ ebay_seller_list 
+    Usage: ebay_seller_list [options] [ebay_id|sku|quantity|watchers]
+  
+      Required options:
+          -u, --user username              .
+      
+      Additional options:
+          -o, --output format              Output format (CSV or JSON)
+          -s, --seller username            The seller eBay username if not me.
+          -v, --[no-]verbose               Run verbosely
+          -z, --ebay-site-id integer       ID number of the eBay site to receive this instruction.
+          -h, -?, --help                   Display this screen.
+```
+
+Get a list of all unsold items, which can be filtered by date, re-listed status, 
+auction or fixed-price format or end date.
+By default it will return a list of eBay item numbers, but it can also display
+**sku**, **quantity** and **watchers**.
+
+```
+$ ebay_unsold 
+    Usage: ebay_unsold [options] [ebay_id|sku|quantity|watchers]
+      
+      Required options:
+          -u, --user username              
+      
+      Additional options:
+          -d, --end-date date              The local-time date on which unsold items ended.
+              --[no-]relisted              Relisted items.
+              --auction                    Auction items only.
+              --fixed-price                Fixed price items only.
+          -z, --ebay-site-id integer       ID number of the eBay site to receive this instruction.
+          -h, -?, --help                   Display this screen.
+```
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'ebay_trader_support'
+gem 'ebay_trader_support', git: 'git://github.com/altabyte/ebay_trader_support'
 ```
 
 And then execute:
@@ -18,11 +88,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install ebay_trader_support
-
-## Usage
-
-TODO: Write usage instructions here
+    $ gem install https://github.com/altabyte/ebay_trader_support
 
 ## Development
 
@@ -32,7 +98,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/ebay_trader_support.
+Bug reports and pull requests are welcome on GitHub at https://github.com/altabyte/ebay_trader_support.
 
 
 ## License

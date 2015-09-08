@@ -7,13 +7,16 @@ Gem::Specification.new do |spec|
   spec.name          = 'ebay-trader-support'
   spec.version       = EbayTraderSupport::VERSION
   spec.authors       = ['Rob Graham']
-  spec.email         = ['altabyte@gmail.com']
+  spec.email         = ['rob@altabyte.com']
 
-  spec.summary       = %q{A suite of classes and CLI examples using eBay Trading API with the ebay-trader gem.}
+  spec.summary       = %q{eBay Trading API utilities and command line tools build using the ebay-trader gem.}
   spec.description   = <<-DESC
-    A suite of classes and CLI examples using eBay Trading API with the ebay-trader gem.
+    eBay Trading API utilities and command line tools build using the ebay-trader gem.
+
+    I have made this gem available on GitHub to show examples of how I use the ebay-trader gem.
+    Please feel free to copy functionality you require for your own business needs.
   DESC
-  spec.homepage      = 'http://www.altabyte.com'
+  spec.homepage      = 'https://github.com/altabyte/ebay_trader_support'
   spec.license       = 'MIT'
 
   # Prevent pushing this gem to RubyGems.org by setting 'allowed_push_host', or
@@ -29,9 +32,9 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}).keep_if { |f| File.executable?(f) }.map { |f| File.basename(f) }
   spec.require_paths = ['lib']
 
-  spec.add_development_dependency 'bundler', '~> 1.10'
-  spec.add_development_dependency 'rake', '~> 10.0'
-  spec.add_development_dependency 'redis', '~> 3.0'
+  spec.add_development_dependency 'bundler',    '~> 1.10'
+  spec.add_development_dependency 'rake',       '~> 10.0'
+  spec.add_development_dependency 'redis',      '~> 3.0'
   spec.add_development_dependency 'rspec'
 
   spec.add_runtime_dependency 'activesupport',  '~> 4.0'

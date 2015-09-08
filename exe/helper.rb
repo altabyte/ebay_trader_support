@@ -25,7 +25,7 @@ EbayTrader.configure do |config|
   config.counter = lambda {
     begin
       redis = Redis.new(host: 'localhost')
-      key = "ebay_trading:production:call_count:#{Time.now.utc.strftime('%Y-%m-%d')}"
+      key = "ebay_trader:production:call_count:#{Time.now.utc.strftime('%Y-%m-%d')}"
       redis.incr(key)
     rescue SocketError
       console 'Failed to increment Redis call counter!', :red

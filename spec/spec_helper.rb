@@ -39,7 +39,7 @@ def configure_api_environment(env)
     config.counter = lambda {
       begin
         redis = Redis.new(host: 'localhost')
-        key = "ebay_trading:#{env.to_s}:call_count:#{Time.now.utc.strftime('%Y-%m-%d')}"
+        key = "ebay_trader:#{env.to_s}:call_count:#{Time.now.utc.strftime('%Y-%m-%d')}"
         redis.incr(key)
       rescue SocketError
         raise 'Failed to increment Redis call counter!'

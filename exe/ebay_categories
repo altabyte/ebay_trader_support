@@ -10,6 +10,7 @@ class Categories
 
   def initialize
     options.show_root_categories = false
+    options.ebay_site_id = EbayTrader.configuration.ebay_site_id
     parse_args options
 
     # Sending an unrecognized base category value ('all') to GetCategories

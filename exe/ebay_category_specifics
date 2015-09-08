@@ -9,6 +9,7 @@ include EbayTraderSupport
 class CategorySpecifics
 
   def initialize
+    options.ebay_site_id = EbayTrader.configuration.ebay_site_id
     parse_args options
 
     category_number = ARGV.first

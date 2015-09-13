@@ -1,0 +1,64 @@
+#!/usr/bin/env ruby
+
+require_relative './helper'
+include ExecutableHelper
+
+require 'ebay_trader'
+require 'ebay_trader/request'
+
+class EbayTokenStatus
+
+  def initialize
+    parse_args options
+    username = options.username
+    auth_token = EbayTrader.configuration.auth_token_for(username)
+    raise "eBay username '#{username}' is not valid" if auth_token.nil?
+
+    # Execute the request...
+    request = EbayTrader::Request.new('GetTokenStatus', auth_token: auth_token)
+
+    if request.success?
+      console "User ID:  #{options.username}"
+      console "Status:   #{request.response_hash.deep_find(%w'token_status status')}"
+      console "Expires:  #{request.response_hash.deep_find(%w'token_status expiration_time')}"
+    else
+      if request.has_errors?
+        raise request.errors.first.long_message
+      else
+        raise 'Unknown error'
+      end
+    end
+  end
+
+  #---------------------------------------------------------------------------
+  private
+
+  def parse_args(options)
+    ARGV << '-h' if ARGV.empty?
+    option_parser = OptionParser.new do |opts|
+      opts.banner = "Usage: #{File.basename(__FILE__)} [options]"
+
+      opts.separator ''
+      opts.separator 'Required options:'
+      opts.on('-u', '--user username', '.') do |username|
+        options.username = username
+      end
+
+      opts.separator ''
+      opts.separator 'Additional options:'
+
+      opts.on('-h', '-?', '--help', 'Display this screen.') do
+        raise opts.to_s
+      end
+    end
+    option_parser.parse!
+  end
+end
+
+#-----------------------------------------------------------------------------
+begin
+  EbayTokenStatus.new
+rescue Exception => e
+  console e.message, :red
+  exit -1
+end

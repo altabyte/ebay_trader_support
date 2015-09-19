@@ -39,11 +39,11 @@ module EbayTraderSupport
     #
     def initialize(event_type, time_from, time_to, args = {})
       @event_type = event_type
-      raise RequestError.new("Event type '#{event_type}' is not valid") unless [:modified, :started, :ended].include?(event_type)
+      raise EbayTraderError.new("Event type '#{event_type}' is not valid") unless [:modified, :started, :ended].include?(event_type)
       @time_from = time_from.utc
-      raise RequestError('Time from is not valid') unless @time_from.is_a?(Time)
+      raise EbayTraderError('Time from is not valid') unless @time_from.is_a?(Time)
       @time_to = time_to.utc
-      raise RequestError('Time to is not valid') unless @time_to.is_a?(Time)
+      raise EbayTraderError('Time to is not valid') unless @time_to.is_a?(Time)
 
       skip_type_casting = (args[:skip_type_casting] || []).concat(ItemDetails::SKIP_TYPE_CASTING)
       args[:skip_type_casting] = skip_type_casting.uniq

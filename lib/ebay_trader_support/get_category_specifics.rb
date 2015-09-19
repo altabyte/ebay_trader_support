@@ -13,7 +13,7 @@ module EbayTraderSupport
 
     def initialize(category_number, args = {})
       category_number = category_number.to_i
-      raise RequestError, 'Please provide a valid root category number' unless category_number > 0
+      raise EbayTraderError, 'Please provide a valid root category number' unless category_number > 0
 
       super(CALL_NAME, args) do
         CategorySpecific do

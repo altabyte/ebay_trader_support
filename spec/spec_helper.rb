@@ -20,7 +20,7 @@ def configure_api_environment(env)
 
   EbayTrader.configure do |config|
 
-    config.ebay_api_version = 935
+    config.ebay_api_version = 939
 
     config.environment      = env
 

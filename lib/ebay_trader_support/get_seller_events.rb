@@ -69,7 +69,7 @@ module EbayTraderSupport
       end
 
       @items = []
-      items = response_hash.deep_find([:item_array, :item])
+      items = response_hash.deep_find([:item_array, :item], [])
       items = [items] unless items.is_a?(Array)
       items.each do |item_hash|
         @items << EventItem.new(item_hash)

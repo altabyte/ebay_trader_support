@@ -15,7 +15,7 @@ describe GetSellerEvents do
   context 'when listings ended in the last 24 hours' do
 
     before :all do
-      @time_to = Time.now
+      @time_to = Time.now.utc - 10.minutes
       @time_from = @time_to - 24.hours
       @event_type = :ended
 

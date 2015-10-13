@@ -8,7 +8,7 @@ require 'redis'
 EbayTrader.configure do |config|
   config.environment = :production
   config.ebay_site_id = 3 # ebay.co.uk
-  config.ebay_api_version = 935
+  config.ebay_api_version = 941
   config.ssl_verify = false
 
   config.dev_id  = ENV['EBAY_API_DEV_ID']

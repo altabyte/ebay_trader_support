@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'ebay_trader'
 
 module EbayTraderSupport
@@ -361,11 +363,11 @@ module EbayTraderSupport
     # @return [String] summary of days, hours and minutes remaining.
     #
     def time_left_to_s
-      string = ''
-      string << "#{time_left[:days].to_s.rjust 2}d " if time_left[:days] > 0
-      string << "#{time_left[:hours].to_s.rjust 2}h " if time_left[:hours] > 0
+      string = []
+      string << "#{time_left[:days].to_s.rjust 2}d" if time_left[:days] > 0
+      string << "#{time_left[:hours].to_s.rjust 2}h" if time_left[:hours] > 0
       string << "#{time_left[:minutes].to_s.rjust 2}m" if time_left[:minutes] > 0
-      string.strip
+      string.join(' ').strip
     end
 
 
@@ -447,7 +449,8 @@ module EbayTraderSupport
     # @return [String] summary description.
     #
     def summary(include_item_specifics = false)
-      string = title.ljust(80)
+      string = []
+      string << title.ljust(80)
       string << "[#{status.to_s}]".capitalize.rjust(15)
 
       if has_variations?
@@ -527,7 +530,7 @@ module EbayTraderSupport
         end
       end
 
-      string
+      string.join
     end
   end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 require 'ebay_trader'
@@ -31,7 +33,6 @@ describe GetSellerList do
 
       it {
         #puts "#{seller_list.xml_request}\n\n"
-        #puts "#{seller_list.to_s(2)}\n\n"
         puts "#{JSON.pretty_generate seller_list.response_hash[:item_array]}\n\n"
       }
 
@@ -49,6 +50,10 @@ describe GetSellerList do
         expect(seller_list.items).to be_a(Array)
         expect(seller_list.items).not_to be_empty
         expect(seller_list.items.size).to eq(per_page)
+        expect(seller_list.items.first).not_to be_nil
+        puts
+        puts seller_list.first.summary
+        puts
       end
 
       it 'should have a single valid item' do
@@ -113,7 +118,7 @@ describe GetSellerList do
           match_items = []
           time = Time.now
           begin
-            seller_list = GetSellerList.new(auth_token, page_number += 1, per_page: per_page)
+            seller_list = GetSellerList.new(page_number += 1, per_page: per_page)
             expect(seller_list).not_to be_nil
             expect(seller_list).to be_success
             expect(page_number).to eq(seller_list.page_number)
@@ -208,7 +213,7 @@ describe GetSellerList do
     # Do not check start time as this call will also return scheduled items!
     # expect(item.start_time).to be < Time.now.utc
 
-    expect(item.quantity_listed).to be >= 1
+    expect(item.quantity_listed).to be >= 0   # Can be 0 if item listed, but out-of-stock
     expect(item.quantity_sold).to be >= 0
     expect(item.quantity_available).to be item.quantity_listed - item.quantity_sold
     puts "  Quantity: #{item.quantity_available}  ->  #{item.quantity_listed} listed, #{item.quantity_sold} sold"

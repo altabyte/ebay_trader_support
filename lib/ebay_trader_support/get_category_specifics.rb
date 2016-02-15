@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'ebay_trader'
 require 'ebay_trader/request'
 
@@ -25,7 +27,7 @@ module EbayTraderSupport
     end
 
     def to_s
-      string = ''
+      string = []
       recommendations = deep_find([:recommendations, :name_recommendation])
       unless recommendations.nil?
         recommendations = [recommendations] unless recommendations.is_a? Array
@@ -41,7 +43,7 @@ module EbayTraderSupport
           end
         end
       end
-      string
+      string.join
     end
   end
 end

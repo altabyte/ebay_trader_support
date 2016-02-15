@@ -33,7 +33,7 @@ describe GetItem do
   end
 
   #
-  # Get the details of a currently active item on Tantric Tokyo
+  # Get the details of a currently active item on TT
   #
   context 'when getting a sellers live item from Production site' do
 

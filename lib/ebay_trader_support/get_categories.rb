@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'ebay_trader'
 require 'ebay_trader/request'
 
@@ -65,11 +67,11 @@ module EbayTraderSupport
           end
           category_to_s(root_category_number)
         else
-          string = ''
+          string = []
           @categories.each_pair do |id, data|
             string << "#{id.to_s.rjust(8)}   #{data[:name]}\n"
           end
-          string
+          string.join
         end
       end
     end
@@ -81,12 +83,13 @@ module EbayTraderSupport
       category = @categories[category_number]
       return '' unless category
       indent = 3 * (category[:level] - 1)
-      string = ''.ljust(indent)
+      string = []
+      string << ''.ljust(indent)
       string << category[:name].ljust(45 - indent)
       string << "#{category[:id]}".rjust(8)
       string << "\n"
       category[:children].each { |child_id| string << category_to_s(child_id) }
-      string
+      string.join
     end
   end
 end

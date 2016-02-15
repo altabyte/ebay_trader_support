@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 require 'ebay_trader'
@@ -125,5 +127,4 @@ describe GetCategories do
       puts "\nCategories for UK Crafts -> Beads -> Gemstone -> Amethyst:\n\n#{string}\n\n"
     end
   end
-
 end

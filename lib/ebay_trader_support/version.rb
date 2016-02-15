@@ -4,5 +4,5 @@
 # For minor edits and fixes, bump the *.*.X number.
 
 module EbayTraderSupport
-  VERSION = '1.7.8'
+  VERSION = '1.7.9'
 end

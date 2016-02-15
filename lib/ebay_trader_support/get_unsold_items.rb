@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'ebay_trader'
 require 'ebay_trader/request'
 
